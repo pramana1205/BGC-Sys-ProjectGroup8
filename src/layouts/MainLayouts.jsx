@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { path: "/koleksi", icon: LuTag, title: "Koleksi" },
   { path: "/order", icon: LuShoppingCart, title: "Order" },
   { path: "/riwayat", icon: LuHistory, title: "Riwayat Pesanan" },
-  { path: "/akun", icon: LuCircleUserRound, title: "Akun Saya" },git branch -M main
+  { path: "/akun", icon: LuCircleUserRound, title: "Akun Saya" },
 ];
 
 export default function MainLayout() {
