@@ -248,60 +248,7 @@ export default function Wishlist() {
 
   return (
     <div className="min-h-screen bg-[#fffafb]">
-      {/* NAVBAR */}
-      <nav className="sticky top-0 z-40 bg-white border-b border-pink-100 px-6 sm:px-10 py-5 flex items-center justify-between">
-        {/* BRAND */}
-        <button
-          onClick={() => navigate("/")}
-          className="font-bold text-2xl"
-          style={{ fontFamily: "serif" }}
-        >
-          <span className="text-yellow-600">BlackGold </span>
-          <span className="text-[#1a0a10]">Cherish</span>
-        </button>
-
-        {/* ICON */}
-        <div className="flex items-center gap-5">
-          {/* wishlist */}
-          <button className="relative">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#1a0a10"
-              strokeWidth="1.8"
-            >
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-
-            <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center">
-              {wishlist.length}
-            </span>
-          </button>
-
-          {/* cart */}
-          <button onClick={() => navigate("/keranjang")} className="relative">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#1a0a10"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            >
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-            </svg>
-          </button>
-        </div>
-      </nav>
-
-      {/* CONTENT */}
       <div className="max-w-7xl mx-auto px-6 sm:px-10 py-10">
-        {/* HEADER */}
         <div className="mb-10">
           <button
             onClick={() => navigate(-1)}
@@ -319,7 +266,6 @@ export default function Wishlist() {
           </p>
         </div>
 
-        {/* EMPTY */}
         {wishlist.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-28">
             <h2 className="text-3xl font-bold text-[#1a0a10]">
@@ -337,7 +283,6 @@ export default function Wishlist() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {wishlist.map((item) => (
               <div key={item.id}>
-                {/* IMAGE */}
                 <div className="relative overflow-hidden rounded-3xl group">
                   <img
                     src={item.image}
@@ -345,7 +290,6 @@ export default function Wishlist() {
                     className="w-full h-[460px] object-cover"
                   />
 
-                  {/* remove btn */}
                   <button
                     onClick={() => removeWishlist(item.id)}
                     className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-md"
@@ -354,7 +298,6 @@ export default function Wishlist() {
                   </button>
                 </div>
 
-                {/* INFO */}
                 <div className="pt-5">
                   <h2 className="text-2xl font-semibold text-[#1a0a10]">
                     {item.name}
@@ -366,7 +309,6 @@ export default function Wishlist() {
                     {toRp(item.harga)}
                   </p>
 
-                  {/* BUTTON */}
                   <div className="flex gap-3 mt-5">
                     <button
                       onClick={() => setSelected(item)}
@@ -389,7 +331,6 @@ export default function Wishlist() {
         )}
       </div>
 
-      {/* MODAL */}
       <ProductModal
         product={selected}
         onClose={() => setSelected(null)}

@@ -4,10 +4,12 @@ import {
   LuShoppingCart,
   LuHistory,
   LuCircleUserRound,
+  LuHeart,
 } from "react-icons/lu";
 
 const NAV_ITEMS = [
   { path: "/koleksi", icon: LuTag, title: "Koleksi" },
+  { path: "/wishlist", icon: LuHeart, title: "Wishlist" },
   { path: "/order", icon: LuShoppingCart, title: "Order" },
   { path: "/riwayat", icon: LuHistory, title: "Riwayat Pesanan" },
   { path: "/akun", icon: LuCircleUserRound, title: "Akun Saya" },
@@ -22,7 +24,6 @@ export default function MainLayout() {
     <div className="min-h-screen bg-[#fffafb]">
       {!isLanding && (
         <nav className="kol-navbar sticky top-0 z-40 bg-white flex items-center justify-between px-6 sm:px-10 py-4">
-          {/* Brand */}
           <button
             onClick={() => navigate("/")}
             className="text-gradient-brand font-bold text-xl tracking-tight"
@@ -31,7 +32,6 @@ export default function MainLayout() {
             BlackGold Cherish
           </button>
 
-          {/* Icons */}
           <div className="flex items-center gap-1">
             {NAV_ITEMS.map(({ path, icon: Icon, title }) => {
               const isActive = location.pathname === path;
@@ -66,7 +66,6 @@ export default function MainLayout() {
                   >
                     {title}
                   </span>
-                  {/* Active indicator dot */}
                   {isActive && (
                     <span
                       className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
