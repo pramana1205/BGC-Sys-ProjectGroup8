@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import axios from "axios";
 import { BsFillExclamationDiamondFill } from "react-icons/bs";
 import { ImSpinner2 } from "react-icons/im";
 import { FcGoogle } from "react-icons/fc";
+import { setAuth, computeRole, getRole, getToken } from "../../utils/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,6 +16,20 @@ export default function Login() {
     password: "",
   });
 
+  useEffect(() => {
+    const token = getToken();
+    const currentRole = getRole();
+    if (token) {
+      if (currentRole === "admin") {
+        navigate("/dashboard");
+      } else if (currentRole === "owner") {
+        navigate("/owner-dashboard");
+      } else {
+        navigate("/");
+      }
+    }
+  }, [navigate]);
+
   const handleChange = (evt) => {
     const { name, value } = evt.target;
     setDataForm({ ...dataForm, [name]: value });
@@ -25,18 +40,37 @@ export default function Login() {
     setLoading(true);
     setError("");
 
+    const hardcodedAdmin = dataForm.email === "admin@blackgoldcherish.com" && dataForm.password === "admin123";
+    const hardcodedOwner = dataForm.email === "owner@blackgoldcherish.com" && dataForm.password === "owner123";
+
+    if (hardcodedAdmin || hardcodedOwner) {
+      const role = hardcodedAdmin ? "admin" : "owner";
+      const token = hardcodedAdmin ? "admin-token" : "owner-token";
+      setAuth({ token, role }, rememberMe);
+      if (role === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/owner-dashboard");
+      }
+      setLoading(false);
+      return;
+    }
+
     axios
       .post("https://dummyjson.com/user/login", {
         username: dataForm.email,
         password: dataForm.password,
       })
       .then((response) => {
-        if (rememberMe) {
-          localStorage.setItem("userToken", response.data.token);
+        const role = computeRole(dataForm.email);
+        setAuth({ token: response.data.token, role }, rememberMe);
+        if (role === "admin") {
+          navigate("/dashboard");
+        } else if (role === "owner") {
+          navigate("/owner-dashboard");
         } else {
-          sessionStorage.setItem("userToken", response.data.token);
+          navigate("/");
         }
-        navigate("/");
       })
       .catch((err) => {
         setError(err.response?.data?.message || "Email atau password salah");

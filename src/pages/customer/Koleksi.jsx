@@ -307,60 +307,64 @@ export default function Koleksi() {
           HERO HEADER
       ════════════════════════════ */}
       <div className="kol-hero-header px-6 sm:px-10 py-10">
-        <h1
-          className="font-bold text-4xl sm:text-5xl mb-2"
-          style={{
-            color: "#b8860b",
-            fontFamily: "var(--font-playfair, serif)",
-          }}
-        >
-          Koleksi Kami
-        </h1>
-        <p className="text-sm" style={{ color: "#6b4a58" }}>
-          Temukan pilihan fashion terbaik untuk Anda
-        </p>
+        <div className="max-w-7xl mx-auto text-center">
+          <h1
+            className="font-bold text-4xl sm:text-5xl mb-2"
+            style={{
+              color: "#b8860b",
+              fontFamily: "var(--font-playfair, serif)",
+            }}
+          >
+            Koleksi Kami
+          </h1>
+          <p className="text-sm" style={{ color: "#6b4a58" }}>
+            Temukan pilihan fashion terbaik untuk Anda
+          </p>
+        </div>
       </div>
 
       {/* ════════════════════════════
           SEARCH + FILTER
       ════════════════════════════ */}
-      <div className="px-6 sm:px-10 pb-6">
-        {/* Search */}
-        <div className="relative mb-5 max-w-3xl">
-          <input
-            type="text"
-            placeholder="Cari produk..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="kol-search w-full px-5 py-3.5 pr-12 rounded-full text-sm outline-none"
-            style={{ color: "#2a1a1f" }}
-          />
-          <svg
-            className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#e879a0"
-            strokeWidth="2"
-            strokeLinecap="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
-        </div>
-
-        {/* Filter chips */}
-        <div className="flex flex-wrap gap-2.5 mb-7">
-          {filters.map((f) => (
-            <button
-              key={f}
-              onClick={() => setActiveFilter(f)}
-              className={`kol-chip px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${activeFilter === f ? "kol-chip--active" : ""}`}
+      <div className="px-6 sm:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          {/* Search */}
+          <div className="relative mb-5 mx-auto max-w-3xl">
+            <input
+              type="text"
+              placeholder="Cari produk..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="kol-search w-full px-5 py-3.5 pr-12 rounded-full text-sm outline-none"
+              style={{ color: "#2a1a1f" }}
+            />
+            <svg
+              className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#e879a0"
+              strokeWidth="2"
+              strokeLinecap="round"
             >
-              {f}
-            </button>
-          ))}
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+          </div>
+
+          {/* Filter chips */}
+          <div className="flex flex-wrap gap-2.5 mb-7 justify-center">
+            {filters.map((f) => (
+              <button
+                key={f}
+                onClick={() => setActiveFilter(f)}
+                className={`kol-chip px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${activeFilter === f ? "kol-chip--active" : ""}`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* ════════════════════════════
@@ -376,8 +380,10 @@ export default function Koleksi() {
             </p>
           </div>
         ) : (
-          <div className="kol-grid">
-            {filtered.map((product) => (
+          <>
+            <div className="max-w-7xl mx-auto">
+              <div className="kol-grid">
+              {filtered.map((product) => (
               <div
                 key={product.id}
                 className="kol-card group relative overflow-hidden"
@@ -444,9 +450,11 @@ export default function Koleksi() {
                 </div>
               </div>
             ))}
-          </div>
+              </div>
+            </div>
+          </>
         )}
-      </div>
+        </div>
 
       {/* ════════════════════════════
           MODAL DETAIL

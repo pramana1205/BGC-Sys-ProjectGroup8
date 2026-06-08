@@ -1,8 +1,25 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SidebarOwner from "../component/SidebarOwner";
 import { Outlet } from "react-router-dom";
 import { FiBell, FiUser } from "react-icons/fi";
+import { getRole, getToken } from "../utils/auth";
 
 export default function OwnerLayouts() {
+  const navigate = useNavigate();
+  const role = getRole();
+  const token = getToken();
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    if (role !== "owner") {
+      navigate("/");
+    }
+  }, [navigate, role, token]);
+
   return (
     <div className="bg-gray-50 min-h-screen flex">
       <SidebarOwner />

@@ -222,7 +222,6 @@
 
 .kol-hero-header {
   background: linear-gradient(180deg, #fff5f9 0%, #ffffff 100%);
-  border-bottom: 1px solid #f0e8ed;
 }
 
 .kol-search {
@@ -245,9 +244,10 @@
   box-shadow: 0 2px 12px rgba(232,121,160,0.35);
 }
 
-.kol-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-@media (max-width: 1024px) { .kol-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 640px)  { .kol-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+.kol-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 32px; }
+@media (min-width: 640px) { .kol-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; } }
+@media (min-width: 1024px) { .kol-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1280px) { .kol-grid { grid-template-columns: repeat(4, 1fr); } }
 
 /* Wishlist grid — 3 kolom desktop, 2 tablet, 1 mobile */
 .wish-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }

@@ -208,7 +208,7 @@ const ProductModal = ({ product, onClose, onRemove }) => {
           <div className="flex gap-3 mt-8 flex-wrap">
             {/* PESAN */}
             <button
-              onClick={() => navigate("/keranjang")}
+              onClick={() => navigate("/order")}
               className="kol-btn-pesan flex-1 min-w-[130px] py-3.5 rounded-full text-sm font-semibold text-white tracking-wide"
             >
               Pesan Sekarang
@@ -248,88 +248,110 @@ export default function Wishlist() {
 
   return (
     <div className="min-h-screen bg-[#fffafb]">
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 py-10">
-        <div className="mb-10">
+      <div className="kol-hero-header px-6 sm:px-10 py-10">
+        <div className="max-w-7xl mx-auto text-center">
           <button
             onClick={() => navigate(-1)}
-            className="mb-5 text-4xl text-[#1a0a10]"
+            className="mb-4 inline-flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-70"
+            style={{ color: "#b8860b", fontFamily: "var(--font-cinzel,serif)" }}
           >
-            ←
+            ← Kembali
           </button>
-
-          <h1 className="text-5xl font-bold text-pink-500 mb-2">
+          <h1
+            className="font-bold text-4xl sm:text-5xl mb-2"
+            style={{ color: "#b8860b", fontFamily: "var(--font-playfair,serif)" }}
+          >
             Wishlist Saya
           </h1>
-
-          <p className="text-[#7c6470] text-sm">
+          <p className="text-sm" style={{ color: "#6b4a58" }}>
             Produk favorit yang Anda simpan
           </p>
         </div>
+      </div>
 
-        {wishlist.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-28">
-            <h2 className="text-3xl font-bold text-[#1a0a10]">
-              Wishlist Kosong
-            </h2>
+      {wishlist.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-28">
+          <h2 className="text-3xl font-bold" style={{ color: "#1a0a10" }}>
+            Wishlist Kosong
+          </h2>
 
-            <button
-              onClick={() => navigate("/koleksi")}
-              className="mt-8 px-8 py-4 rounded-full bg-pink-500 text-white font-semibold"
-            >
-              Jelajahi Koleksi
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <button
+            onClick={() => navigate("/koleksi")}
+            className="mt-8 kol-btn-pesan px-8 py-4 rounded-full text-white font-semibold"
+          >
+            Jelajahi Koleksi
+          </button>
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto">
+          <div className="kol-grid">
             {wishlist.map((item) => (
-              <div key={item.id}>
-                <div className="relative overflow-hidden rounded-3xl group">
-                  <img
+              <div
+                key={item.id}
+                className="kol-card group relative overflow-hidden"
+              >
+                {/* IMAGE */}
+                <div className="kol-card-img relative overflow-hidden">
+                  <ProductImage
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-[460px] object-cover"
                   />
 
+                  {/* REMOVE WISHLIST */}
                   <button
                     onClick={() => removeWishlist(item.id)}
-                    className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-md"
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/85 backdrop-blur-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110 z-10"
                   >
                     ❤️
                   </button>
-                </div>
 
-                <div className="pt-5">
-                  <h2 className="text-2xl font-semibold text-[#1a0a10]">
-                    {item.name}
-                  </h2>
-
-                  <p className="text-[#7c6470] mt-1">{item.jenis}</p>
-
-                  <p className="text-pink-500 text-2xl mt-4">
-                    {toRp(item.harga)}
-                  </p>
-
-                  <div className="flex gap-3 mt-5">
+                  {/* HOVER DETAIL */}
+                  <div className="kol-card-overlay absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button
                       onClick={() => setSelected(item)}
-                      className="flex-1 py-3 rounded-full border-2 border-pink-500 text-pink-500 font-semibold hover:bg-pink-50 transition-all"
+                      className="kol-btn-detail px-6 py-2.5 rounded-full text-sm font-semibold text-white shadow-lg"
                     >
                       Lihat Detail
                     </button>
-
-                    <button
-                      onClick={() => navigate("/keranjang")}
-                      className="flex-1 py-3 rounded-full bg-pink-500 text-white font-semibold hover:bg-pink-600 transition-all"
-                    >
-                      Pre-Order
-                    </button>
                   </div>
+                </div>
+
+                {/* INFO */}
+                <div className="pt-3 pb-1">
+                  <p
+                    className="font-semibold text-sm leading-tight mb-0.5 truncate"
+                    style={{ color: "#1a0a10" }}
+                  >
+                    {item.name}
+                  </p>
+
+                  <p
+                    className="text-xs mb-0.5"
+                    style={{ color: "#a07080" }}
+                  >
+                    {item.jenis}
+                  </p>
+
+                  <p
+                    className="text-xs font-semibold"
+                    style={{ color: "#b8860b" }}
+                  >
+                    {toRp(item.harga)}
+                  </p>
+
+                  {/* MOBILE BUTTON */}
+                  <button
+                    onClick={() => setSelected(item)}
+                    className="kol-btn-detail-sm w-full mt-3 py-2 rounded-full text-xs font-semibold text-white sm:hidden"
+                  >
+                    Lihat Detail
+                  </button>
                 </div>
               </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <ProductModal
         product={selected}

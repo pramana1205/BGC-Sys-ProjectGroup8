@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { clearAuth } from "../../utils/auth";
 
 const admin = { nama: "Ahmad Fauzi", email: "admin@blackgoldcherish.com", telepon: "081298765432", role: "Admin", joinDate: "Maret 2024" };
 
@@ -58,7 +59,7 @@ export default function AkunAdmin() {
           </div>
         </div>
 
-        <button onClick={() => navigate("/login")} className="mt-8 flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-500 transition-colors">
+        <button onClick={() => { clearAuth(); navigate("/login"); }} className="mt-8 flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-500 transition-colors">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           Keluar dari Akun
         </button>

@@ -1,8 +1,25 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../component/Sidebar";
 import { Outlet } from "react-router-dom";
 import { FiBell, FiUser } from "react-icons/fi";
+import { getRole, getToken } from "../utils/auth";
 
 export default function AdminLayouts() {
+  const navigate = useNavigate();
+  const role = getRole();
+  const token = getToken();
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    if (role !== "admin") {
+      navigate("/");
+    }
+  }, [navigate, role, token]);
+
   return (
     <div className="bg-gray-50 min-h-screen flex">
       <Sidebar role="admin" />
