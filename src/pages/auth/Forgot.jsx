@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { supabase } from "../../lib/supabase";
 import {
   BsFillExclamationDiamondFill,
   BsCheckCircleFill,
@@ -25,17 +26,18 @@ export default function Forgot() {
       return;
     }
 
-    setTimeout(() => {
-      if (email) {
-        setSuccess(true);
-        setTimeout(() => {
-          navigate("/login");
-        }, 3000);
-      } else {
-        setError("Email tidak valid");
-      }
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    if (error) {
+      setError(error.message);
       setLoading(false);
-    }, 1500);
+      return;
+    }
+
+    setSuccess(true);
+    setLoading(false);
   };
 
   return (

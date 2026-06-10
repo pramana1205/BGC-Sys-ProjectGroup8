@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import axios from "axios";
 import { BsFillExclamationDiamondFill } from "react-icons/bs";
 import { ImSpinner2 } from "react-icons/im";
 import { FcGoogle } from "react-icons/fc";
+import { supabase } from "../../lib/supabase";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -52,28 +52,63 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post("https://dummyjson.com/users/add", {
-        firstName: dataForm.fullName.split(" ")[0] || "",
-        lastName: dataForm.fullName.split(" ").slice(1).join(" ") || "",
+      const { data, error } = await supabase.auth.signUp({
         email: dataForm.email,
         password: dataForm.password,
-        phone: dataForm.phoneNumber,
       });
 
-      if (response.data) {
-        navigate("/login");
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
       }
+
+      const user = data.user;
+
+      if (!user) {
+        setError("Registrasi berhasil. Silakan cek email untuk verifikasi.");
+        setLoading(false);
+        return;
+      }
+
+      const { error: insertError } = await supabase.from("users").insert({
+        id: user.id,
+        nama: dataForm.fullName,
+        email: dataForm.email,
+        no_hp: dataForm.phoneNumber,
+        provider: "email",
+        role: "customer",
+      });
+
+      if (insertError) {
+        setError(insertError.message);
+        setLoading(false);
+        return;
+      }
+
+      navigate("/login");
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Gagal mendaftar, silakan coba lagi",
-      );
+      setError("Gagal mendaftar, silakan coba lagi");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleRegister = () => {
-    console.log("Google register clicked");
+  const handleGoogleRegister = async () => {
+    setLoading(true);
+    setError("");
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    }
   };
 
   return (

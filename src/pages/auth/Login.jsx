@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import axios from "axios";
 import { BsFillExclamationDiamondFill } from "react-icons/bs";
 import { ImSpinner2 } from "react-icons/im";
 import { FcGoogle } from "react-icons/fc";
-import { setAuth, computeRole, getRole, getToken } from "../../utils/auth";
+import { setAuth, getRole, getToken } from "../../utils/auth";
 import PanelSelector from "../../component/PanelSelector";
+import { supabase } from "../../lib/supabase";
+
+const HARDCODED_ADMIN = { email: "admin@blackgoldcherish.com", password: "admin123", role: "admin", token: "admin-token" };
+const HARDCODED_OWNER = { email: "owner@blackgoldcherish.com", password: "owner123", role: "owner", token: "owner-token" };
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,22 +16,15 @@ export default function Login() {
   const [error, setError] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showSelector, setShowSelector] = useState(false);
-  const [dataForm, setDataForm] = useState({
-    email: "",
-    password: "",
-  });
+  const [dataForm, setDataForm] = useState({ email: "", password: "" });
 
   useEffect(() => {
     const token = getToken();
     const currentRole = getRole();
     if (token) {
-      if (currentRole === "owner") {
-        setShowSelector(true); // owner sudah login → tampilkan selector
-      } else if (currentRole === "admin") {
-        navigate("/dashboard");
-      } else {
-        navigate("/");
-      }
+      if (currentRole === "owner") setShowSelector(true);
+      else if (currentRole === "admin") navigate("/dashboard");
+      else navigate("/");
     }
   }, [navigate]);
 
@@ -42,56 +38,57 @@ export default function Login() {
     setLoading(true);
     setError("");
 
-    const hardcodedAdmin = dataForm.email === "admin@blackgoldcherish.com" && dataForm.password === "admin123";
-    const hardcodedOwner = dataForm.email === "owner@blackgoldcherish.com" && dataForm.password === "owner123";
-
-    if (hardcodedAdmin || hardcodedOwner) {
-      const role = hardcodedAdmin ? "admin" : "owner";
-      const token = hardcodedAdmin ? "admin-token" : "owner-token";
-      setAuth({ token, role }, rememberMe);
+    // Hardcoded admin/owner bypass
+    if (dataForm.email === HARDCODED_ADMIN.email && dataForm.password === HARDCODED_ADMIN.password) {
+      setAuth({ token: HARDCODED_ADMIN.token, role: HARDCODED_ADMIN.role }, rememberMe);
       setLoading(false);
-      if (role === "owner") {
-        setShowSelector(true); // tampilkan panel selector
-      } else {
-        navigate("/dashboard");
-      }
+      navigate("/dashboard");
+      return;
+    }
+    if (dataForm.email === HARDCODED_OWNER.email && dataForm.password === HARDCODED_OWNER.password) {
+      setAuth({ token: HARDCODED_OWNER.token, role: HARDCODED_OWNER.role }, rememberMe);
+      setLoading(false);
+      setShowSelector(true);
       return;
     }
 
-    axios
-      .post("https://dummyjson.com/user/login", {
-        username: dataForm.email,
-        password: dataForm.password,
-      })
-      .then((response) => {
-        const role = computeRole(dataForm.email);
-        setAuth({ token: response.data.token, role }, rememberMe);
-        if (role === "owner") {
-          setShowSelector(true); // tampilkan panel selector
-        } else if (role === "admin") {
-          navigate("/dashboard");
-        } else {
-          navigate("/");
-        }
-      })
-      .catch((err) => {
-        setError(err.response?.data?.message || "Email atau password salah");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    // Supabase auth for customer
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email: dataForm.email,
+      password: dataForm.password,
+    });
+
+    if (authError) {
+      setError(authError.message === "Invalid login credentials"
+        ? "Email atau password salah"
+        : authError.message);
+      setLoading(false);
+      return;
+    }
+
+    const user = data.user;
+    // Save user ID as token
+    setAuth({ token: user.id, role: "customer" }, rememberMe);
+    setLoading(false);
+    navigate("/");
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Google login clicked");
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError("");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    }
   };
 
   return (
     <>
-      {/* Panel selector for owner */}
-      {showSelector && (
-        <PanelSelector onClose={() => setShowSelector(false)} />
-      )}
+      {showSelector && <PanelSelector onClose={() => setShowSelector(false)} />}
 
       <p className="text-pink-600 text-base font-medium text-center mb-6">
         Selamat datang kembali
@@ -115,13 +112,12 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-pink-700 mb-2">
-              Email
-            </label>
+            <label className="block text-sm font-semibold text-pink-700 mb-2">Email</label>
             <input
-              type="text"
+              type="email"
               name="email"
               placeholder="email@example.com"
+              value={dataForm.email}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl border border-pink-200 bg-white text-sm placeholder:text-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
               required
@@ -129,13 +125,12 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-pink-700 mb-2">
-              Password
-            </label>
+            <label className="block text-sm font-semibold text-pink-700 mb-2">Password</label>
             <input
               type="password"
               name="password"
               placeholder="Masukkan password"
+              value={dataForm.password}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl border border-pink-200 bg-white text-sm placeholder:text-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
               required
@@ -194,9 +189,7 @@ export default function Login() {
 
         <div className="flex items-center my-6">
           <div className="flex-grow border-t border-pink-100"></div>
-          <span className="px-4 text-xs text-pink-400 font-medium bg-transparent">
-            ATAU
-          </span>
+          <span className="px-4 text-xs text-pink-400 font-medium bg-transparent">ATAU</span>
           <div className="flex-grow border-t border-pink-100"></div>
         </div>
 

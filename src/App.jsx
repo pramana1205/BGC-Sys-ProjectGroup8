@@ -6,6 +6,8 @@ import AdminLayouts from "./layouts/AdminLayouts";
 import OwnerLayouts from "./layouts/OwnerLayouts";
 import AuthLayout from "./layouts/AuthLayouts";
 import LoadingScreen from "./component/LoadingScreen";
+import AuthCallback from "./pages/auth/AuthCallback";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 const Login = lazy(() => import("./pages/auth/Login"));
 const Register = lazy(() => import("./pages/auth/Register"));
@@ -40,6 +42,8 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot" element={<Forgot />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
 
         <Route element={<MainLayout />}>
