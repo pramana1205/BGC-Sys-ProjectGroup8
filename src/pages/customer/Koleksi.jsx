@@ -9,16 +9,33 @@ const toRp = (n) => "Rp " + Number(n).toLocaleString("id-ID");
 ══════════════════════════════════════ */
 const ProductImage = ({ src, alt, className = "" }) => {
   if (src) {
-    return <img src={src} alt={alt} className={`w-full h-full object-cover ${className}`} />;
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className={`w-full h-full object-cover ${className}`}
+      />
+    );
   }
   return (
-    <div className={`w-full h-full kol-img-placeholder flex flex-col items-center justify-center gap-2 ${className}`}>
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(180,130,60,0.35)" strokeWidth="1.4">
+    <div
+      className={`w-full h-full kol-img-placeholder flex flex-col items-center justify-center gap-2 ${className}`}
+    >
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="rgba(180,130,60,0.35)"
+        strokeWidth="1.4"
+      >
         <rect x="3" y="3" width="18" height="18" rx="2" />
         <circle cx="8.5" cy="8.5" r="1.5" />
         <path d="M21 15l-5-5L5 21" />
       </svg>
-      <span className="text-[11px]" style={{ color: "rgba(180,130,60,0.45)" }}>Foto Produk</span>
+      <span className="text-[11px]" style={{ color: "rgba(180,130,60,0.45)" }}>
+        Foto Produk
+      </span>
     </div>
   );
 };
@@ -26,29 +43,62 @@ const ProductImage = ({ src, alt, className = "" }) => {
 /* ══════════════════════════════════════
    MODAL DETAIL PRODUK
 ══════════════════════════════════════ */
-const ProductModal = ({ product, onClose, onWishlist, wishlistIds, onOrder }) => {
+const ProductModal = ({
+  product,
+  onClose,
+  onWishlist,
+  wishlistIds,
+  onOrder,
+}) => {
   if (!product) return null;
   const isWishlisted = wishlistIds.includes(product.id);
 
   return (
-    <div className="kol-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onClick={onClose}>
-      <div className="kol-modal-card bg-white rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto flex flex-col sm:flex-row relative" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="kol-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        className="kol-modal-card bg-white rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto flex flex-col sm:flex-row relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Tombol Tutup */}
-        <button onClick={onClose} className="absolute top-3.5 right-3.5 z-20 w-8 h-8 rounded-full flex items-center justify-center hover:bg-pink-50 transition-colors" style={{ color: "#dc143c" }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <button
+          onClick={onClose}
+          className="absolute top-3.5 right-3.5 z-20 w-8 h-8 rounded-full flex items-center justify-center hover:bg-pink-50 transition-colors"
+          style={{ color: "#dc143c" }}
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          >
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
 
         {/* Gambar kiri */}
-        <div className="w-full sm:w-[42%] shrink-0 rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none overflow-hidden" style={{ minHeight: 300 }}>
+        <div
+          className="w-full sm:w-[42%] shrink-0 rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none overflow-hidden"
+          style={{ minHeight: 300 }}
+        >
           <ProductImage src={product.gambar_url} alt={product.nama_produk} />
         </div>
 
         {/* Detail kanan */}
         <div className="flex flex-col justify-between p-6 sm:p-7 flex-1 min-w-0">
           <div>
-            <h2 className="font-bold text-2xl sm:text-3xl mb-0.5" style={{ color: "#1a0a10", fontFamily: "var(--font-playfair, serif)" }}>
+            <h2
+              className="font-bold text-2xl sm:text-3xl mb-0.5"
+              style={{
+                color: "#1a0a10",
+                fontFamily: "var(--font-playfair, serif)",
+              }}
+            >
               {product.nama_produk}
             </h2>
             <p className="text-sm mb-1" style={{ color: "#a07080" }}>
@@ -56,43 +106,55 @@ const ProductModal = ({ product, onClose, onWishlist, wishlistIds, onOrder }) =>
             </p>
             {product.estimasi_min_hari && (
               <p className="text-xs mb-4" style={{ color: "#b8860b" }}>
-                ⏱ Estimasi {product.estimasi_min_hari}–{product.estimasi_max_hari} hari kerja
+                ⏱ Estimasi {product.estimasi_min_hari}–
+                {product.estimasi_max_hari} hari kerja
               </p>
             )}
 
             {/* Harga */}
-            <p className="kol-harga-gradient text-2xl sm:text-3xl font-bold mb-5">{toRp(product.harga)}</p>
+            <p className="kol-harga-gradient text-2xl sm:text-3xl font-bold mb-5">
+              {toRp(product.harga)}
+            </p>
 
             {/* Deskripsi */}
             {product.deskripsi && (
               <div className="mb-5">
-                <p className="font-semibold text-sm mb-1" style={{ color: "#2a1a1f" }}>Deskripsi</p>
-                <p className="text-sm leading-relaxed" style={{ color: "#6b4a58" }}>{product.deskripsi}</p>
+                <p
+                  className="font-semibold text-sm mb-1"
+                  style={{ color: "#2a1a1f" }}
+                >
+                  Deskripsi
+                </p>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ color: "#6b4a58" }}
+                >
+                  {product.deskripsi}
+                </p>
               </div>
             )}
 
             {/* Bahan Material */}
             {product.bahan_material?.length > 0 && (
               <div className="mb-4">
-                <p className="font-semibold text-sm mb-2" style={{ color: "#2a1a1f" }}>Bahan Material</p>
+                <p
+                  className="font-semibold text-sm mb-2"
+                  style={{ color: "#2a1a1f" }}
+                >
+                  Bahan Material
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {product.bahan_material.map((b) => (
-                    <span key={b} className="px-4 py-1.5 rounded-full text-xs font-medium" style={{ border: "1.5px solid rgba(220,20,60,0.25)", color: "#6b3a4a", background: "rgba(255,240,246,0.7)" }}>
+                    <span
+                      key={b}
+                      className="px-4 py-1.5 rounded-full text-xs font-medium"
+                      style={{
+                        border: "1.5px solid rgba(220,20,60,0.25)",
+                        color: "#6b3a4a",
+                        background: "rgba(255,240,246,0.7)",
+                      }}
+                    >
                       {b}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Ukuran */}
-            {product.ukuran?.length > 0 && (
-              <div>
-                <p className="font-semibold text-sm mb-2" style={{ color: "#2a1a1f" }}>Ukuran Tersedia</p>
-                <div className="flex flex-wrap gap-2">
-                  {product.ukuran.map((u) => (
-                    <span key={u} className="px-3 py-1 rounded-lg text-xs font-semibold border border-pink-200" style={{ color: "#b8860b" }}>
-                      {u}
                     </span>
                   ))}
                 </div>
@@ -103,7 +165,10 @@ const ProductModal = ({ product, onClose, onWishlist, wishlistIds, onOrder }) =>
           {/* Buttons */}
           <div className="flex gap-3 mt-8 flex-wrap">
             <button
-              onClick={() => { onClose(); onOrder(product); }}
+              onClick={() => {
+                onClose();
+                onOrder(product);
+              }}
               className="kol-btn-pesan flex-1 min-w-[130px] py-3.5 rounded-full text-sm font-semibold text-white tracking-wide"
             >
               Pesan Sekarang
@@ -112,7 +177,14 @@ const ProductModal = ({ product, onClose, onWishlist, wishlistIds, onOrder }) =>
               onClick={() => onWishlist(product)}
               className={`kol-btn-wishlist flex-1 min-w-[130px] py-3.5 rounded-full text-sm font-semibold tracking-wide flex items-center justify-center gap-2 ${isWishlisted ? "kol-btn-wishlist--on" : ""}`}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.2">
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill={isWishlisted ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2.2"
+              >
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
               {isWishlisted ? "Tersimpan" : "Wishlist"}
@@ -129,13 +201,13 @@ const ProductModal = ({ product, onClose, onWishlist, wishlistIds, onOrder }) =>
 ══════════════════════════════════════ */
 export default function Koleksi() {
   const navigate = useNavigate();
-  const [products, setProducts]         = useState([]);
-  const [categories, setCategories]     = useState([]);
-  const [loading, setLoading]           = useState(true);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("Semua");
-  const [search, setSearch]             = useState("");
-  const [selected, setSelected]         = useState(null);
-  const [wishlistIds, setWishlistIds]   = useState([]);
+  const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState(null);
+  const [wishlistIds, setWishlistIds] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
   /* ── Fetch produk & kategori ──────────────────── */
@@ -157,19 +229,20 @@ export default function Koleksi() {
         .from("categories")
         .select("nama_kategori")
         .order("nama_kategori");
-      setCategories(cats?.map(c => c.nama_kategori) || []);
+      setCategories(cats?.map((c) => c.nama_kategori) || []);
 
       // Wishlist user saat ini (dari localStorage sebagai key)
-      const userId = (await supabase.auth.getUser())?.data?.user?.id
-        || localStorage.getItem("userToken")
-        || sessionStorage.getItem("userToken");
+      const userId =
+        (await supabase.auth.getUser())?.data?.user?.id ||
+        localStorage.getItem("userToken") ||
+        sessionStorage.getItem("userToken");
 
       if (userId && userId !== "admin-token" && userId !== "owner-token") {
         const { data: wl } = await supabase
           .from("wishlist")
           .select("product_id")
           .eq("user_id", userId);
-        setWishlistIds((wl || []).map(w => w.product_id));
+        setWishlistIds((wl || []).map((w) => w.product_id));
       }
 
       setLoading(false);
@@ -179,9 +252,10 @@ export default function Koleksi() {
 
   /* ── Toggle Wishlist ────────────────────────────── */
   const toggleWishlist = async (product) => {
-    const userId = (await supabase.auth.getUser())?.data?.user?.id
-      || localStorage.getItem("userToken")
-      || sessionStorage.getItem("userToken");
+    const userId =
+      (await supabase.auth.getUser())?.data?.user?.id ||
+      localStorage.getItem("userToken") ||
+      sessionStorage.getItem("userToken");
 
     if (!userId || userId === "admin-token" || userId === "owner-token") {
       navigate("/login");
@@ -192,12 +266,17 @@ export default function Koleksi() {
     const isIn = wishlistIds.includes(product.id);
 
     if (isIn) {
-      await supabase.from("wishlist").delete()
-        .eq("user_id", userId).eq("product_id", product.id);
-      setWishlistIds(prev => prev.filter(id => id !== product.id));
+      await supabase
+        .from("wishlist")
+        .delete()
+        .eq("user_id", userId)
+        .eq("product_id", product.id);
+      setWishlistIds((prev) => prev.filter((id) => id !== product.id));
     } else {
-      await supabase.from("wishlist").insert({ user_id: userId, product_id: product.id });
-      setWishlistIds(prev => [...prev, product.id]);
+      await supabase
+        .from("wishlist")
+        .insert({ user_id: userId, product_id: product.id });
+      setWishlistIds((prev) => [...prev, product.id]);
     }
     setWishlistLoading(false);
   };
@@ -210,8 +289,11 @@ export default function Koleksi() {
   const filters = ["Semua", ...categories];
 
   const filtered = products.filter((p) => {
-    const matchFilter = activeFilter === "Semua" || p.categories?.nama_kategori === activeFilter;
-    const matchSearch = p.nama_produk.toLowerCase().includes(search.toLowerCase());
+    const matchFilter =
+      activeFilter === "Semua" || p.categories?.nama_kategori === activeFilter;
+    const matchSearch = p.nama_produk
+      .toLowerCase()
+      .includes(search.toLowerCase());
     return matchFilter && matchSearch;
   });
 
@@ -219,10 +301,18 @@ export default function Koleksi() {
     <div className="min-h-screen bg-white">
       <div className="kol-hero-header px-6 sm:px-10 py-10">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="font-bold text-4xl sm:text-5xl mb-2" style={{ color: "#b8860b", fontFamily: "var(--font-playfair, serif)" }}>
+          <h1
+            className="font-bold text-4xl sm:text-5xl mb-2"
+            style={{
+              color: "#b8860b",
+              fontFamily: "var(--font-playfair, serif)",
+            }}
+          >
             Koleksi Kami
           </h1>
-          <p className="text-sm" style={{ color: "#6b4a58" }}>Temukan pilihan fashion terbaik untuk Anda</p>
+          <p className="text-sm" style={{ color: "#6b4a58" }}>
+            Temukan pilihan fashion terbaik untuk Anda
+          </p>
         </div>
       </div>
 
@@ -238,7 +328,16 @@ export default function Koleksi() {
               className="kol-search w-full px-5 py-3.5 pr-12 rounded-full text-sm outline-none"
               style={{ color: "#2a1a1f" }}
             />
-            <svg className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e879a0" strokeWidth="2" strokeLinecap="round">
+            <svg
+              className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#e879a0"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
               <circle cx="11" cy="11" r="8" />
               <path d="M21 21l-4.35-4.35" />
             </svg>
@@ -276,17 +375,28 @@ export default function Koleksi() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-24" style={{ color: "#a07080" }}>
             <div className="text-5xl mb-4">🛍️</div>
-            <p className="text-lg italic" style={{ fontFamily: "var(--font-cormorant, serif)" }}>
-              {products.length === 0 ? "Belum ada produk tersedia." : "Produk tidak ditemukan."}
+            <p
+              className="text-lg italic"
+              style={{ fontFamily: "var(--font-cormorant, serif)" }}
+            >
+              {products.length === 0
+                ? "Belum ada produk tersedia."
+                : "Produk tidak ditemukan."}
             </p>
           </div>
         ) : (
           <div className="max-w-7xl mx-auto">
             <div className="kol-grid">
               {filtered.map((product) => (
-                <div key={product.id} className="kol-card group relative overflow-hidden">
+                <div
+                  key={product.id}
+                  className="kol-card group relative overflow-hidden"
+                >
                   <div className="kol-card-img relative overflow-hidden">
-                    <ProductImage src={product.gambar_url} alt={product.nama_produk} />
+                    <ProductImage
+                      src={product.gambar_url}
+                      alt={product.nama_produk}
+                    />
 
                     {/* Wishlist Button */}
                     <button
@@ -294,32 +404,51 @@ export default function Koleksi() {
                       disabled={wishlistLoading}
                       className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/85 backdrop-blur-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110 z-10"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24"
-                        fill={wishlistIds.includes(product.id) ? "#dc143c" : "none"}
-                        stroke="#dc143c" strokeWidth="2.5">
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill={
+                          wishlistIds.includes(product.id) ? "#dc143c" : "none"
+                        }
+                        stroke="#dc143c"
+                        strokeWidth="2.5"
+                      >
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                       </svg>
                     </button>
 
                     {/* Hover overlay */}
                     <div className="kol-card-overlay absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button onClick={() => setSelected(product)} className="kol-btn-detail px-6 py-2.5 rounded-full text-sm font-semibold text-white shadow-lg">
+                      <button
+                        onClick={() => setSelected(product)}
+                        className="kol-btn-detail px-6 py-2.5 rounded-full text-sm font-semibold text-white shadow-lg"
+                      >
                         Lihat Detail
                       </button>
                     </div>
                   </div>
 
                   <div className="pt-3 pb-1">
-                    <p className="font-semibold text-sm leading-tight mb-0.5 truncate" style={{ color: "#1a0a10" }}>
+                    <p
+                      className="font-semibold text-sm leading-tight mb-0.5 truncate"
+                      style={{ color: "#1a0a10" }}
+                    >
                       {product.nama_produk}
                     </p>
                     <p className="text-xs mb-0.5" style={{ color: "#a07080" }}>
                       {product.categories?.nama_kategori || "—"}
                     </p>
-                    <p className="text-xs font-semibold" style={{ color: "#b8860b" }}>
+                    <p
+                      className="text-xs font-semibold"
+                      style={{ color: "#b8860b" }}
+                    >
                       {toRp(product.harga)}
                     </p>
-                    <button onClick={() => setSelected(product)} className="kol-btn-detail-sm w-full mt-3 py-2 rounded-full text-xs font-semibold text-white sm:hidden">
+                    <button
+                      onClick={() => setSelected(product)}
+                      className="kol-btn-detail-sm w-full mt-3 py-2 rounded-full text-xs font-semibold text-white sm:hidden"
+                    >
                       Lihat Detail
                     </button>
                   </div>

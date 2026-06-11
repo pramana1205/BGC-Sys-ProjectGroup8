@@ -91,67 +91,142 @@ export default function MainLayout() {
   const isLanding = location.pathname === "/";
 
   return (
-    <div className="min-h-screen bg-[#fffafb] flex flex-col">
+    <div className="min-h-screen bg-[#fffafb] flex flex-col overflow-x-hidden">
       {!isLanding && (
-        <nav className="kol-navbar sticky top-0 z-40 bg-white flex items-center justify-between px-6 sm:px-10 py-4">
-          <button
-            onClick={() => navigate("/")}
-            className="text-gradient-brand font-bold text-xl tracking-tight"
-            style={{ fontFamily: "var(--font-cinzel, serif)" }}
+        <>
+          {/* ── Desktop Top Navbar (hidden on mobile) ── */}
+          <nav
+            className="kol-navbar sticky top-0 z-40 bg-white hidden sm:flex items-center justify-between px-10 py-4"
+            style={{ borderBottom: "1px solid rgba(184,134,11,0.12)" }}
           >
-            BlackGold Cherish
-          </button>
+            <button
+              onClick={() => navigate("/")}
+              className="text-gradient-brand font-bold text-xl tracking-tight shrink-0"
+              style={{ fontFamily: "var(--font-cinzel, serif)" }}
+            >
+              BlackGold Cherish
+            </button>
 
-          <div className="flex items-center gap-1">
-            {NAV_ITEMS.map(({ path, icon: Icon, title }) => {
-              const isActive = location.pathname === path;
-              return (
-                <button
-                  key={path}
-                  onClick={() => navigate(path)}
-                  title={title}
-                  className="relative flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all duration-200 group"
-                  style={{
-                    color: isActive ? "#b8860b" : "#1a0a10",
-                    background: isActive
-                      ? "rgba(184,134,11,0.08)"
-                      : "transparent",
-                  }}
-                >
-                  <Icon
-                    size={22}
+            <div className="flex items-center gap-1">
+              {NAV_ITEMS.map(({ path, icon: Icon, title }) => {
+                const isActive = location.pathname === path;
+                return (
+                  <button
+                    key={path}
+                    onClick={() => navigate(path)}
+                    title={title}
+                    className="relative flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all duration-200 group"
                     style={{
-                      transition: "transform 0.2s, color 0.2s",
-                      transform: "scale(1)",
-                    }}
-                    className="group-hover:scale-110 group-hover:text-[#b8860b]"
-                  />
-                  <span
-                    className="text-[10px] font-medium leading-none"
-                    style={{
-                      color: isActive ? "#b8860b" : "#6b4c2a",
-                      opacity: isActive ? 1 : 0.75,
-                      transition: "color 0.2s, opacity 0.2s",
+                      color: isActive ? "#b8860b" : "#1a0a10",
+                      background: isActive
+                        ? "rgba(184,134,11,0.08)"
+                        : "transparent",
                     }}
                   >
-                    {title}
-                  </span>
-                  {isActive && (
-                    <span
-                      className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                      style={{ background: "#b8860b" }}
+                    <Icon
+                      size={22}
+                      style={{ transition: "transform 0.2s, color 0.2s" }}
+                      className="group-hover:scale-110 group-hover:text-[#b8860b]"
                     />
-                  )}
-                </button>
-              );
-            })}
+                    <span
+                      className="text-[10px] font-medium leading-none"
+                      style={{
+                        color: isActive ? "#b8860b" : "#6b4c2a",
+                        opacity: isActive ? 1 : 0.75,
+                        transition: "color 0.2s, opacity 0.2s",
+                      }}
+                    >
+                      {title}
+                    </span>
+                    {isActive && (
+                      <span
+                        className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
+                        style={{ background: "#b8860b" }}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+
+          {/* ── Mobile Top Bar — brand name only (visible on mobile) ── */}
+          <div
+            className="sm:hidden sticky top-0 z-40 bg-white flex items-center justify-center px-4 py-3"
+            style={{ borderBottom: "1px solid rgba(184,134,11,0.15)" }}
+          >
+            <button
+              onClick={() => navigate("/")}
+              className="text-gradient-brand font-bold text-lg tracking-tight"
+              style={{ fontFamily: "var(--font-cinzel, serif)" }}
+            >
+              BlackGold Cherish
+            </button>
           </div>
-        </nav>
+        </>
       )}
-      <div className="flex-1">
+
+      {/* ── Page Content ── */}
+      <div className={`flex-1 ${!isLanding ? "pb-20 sm:pb-0" : ""}`}>
         <Outlet />
       </div>
+
       {!isLanding && <Footer />}
+
+      {/* ── Mobile Bottom Navigation Bar (hidden on desktop) ── */}
+      {!isLanding && (
+        <nav
+          className="sm:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-2 py-2"
+          style={{
+            background: "rgba(255,255,255,0.97)",
+            backdropFilter: "blur(12px)",
+            borderTop: "1px solid rgba(184,134,11,0.2)",
+            boxShadow: "0 -4px 20px rgba(0,0,0,0.08)",
+          }}
+        >
+          {NAV_ITEMS.map(({ path, icon: Icon, title }) => {
+            const isActive = location.pathname === path;
+            return (
+              <button
+                key={path}
+                onClick={() => navigate(path)}
+                title={title}
+                className="relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200"
+                style={{
+                  color: isActive ? "#b8860b" : "#9e8a7a",
+                  background: isActive
+                    ? "rgba(184,134,11,0.08)"
+                    : "transparent",
+                  minWidth: "52px",
+                }}
+              >
+                <Icon
+                  size={22}
+                  style={{ transition: "transform 0.2s, color 0.2s" }}
+                />
+                <span
+                  className="text-[9px] font-semibold leading-none text-center w-full"
+                  style={{
+                    color: isActive ? "#b8860b" : "#9e8a7a",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {/* Shorten long labels for mobile */}
+                  {title === "Riwayat Pesanan" ? "Riwayat" : title === "Akun Saya" ? "Akun" : title}
+                </span>
+                {isActive && (
+                  <span
+                    className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full"
+                    style={{ background: "#b8860b" }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </nav>
+      )}
     </div>
   );
 }
