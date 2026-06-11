@@ -136,7 +136,7 @@ export default function AuthLayout() {
 
         {/* Footer */}
         <p className="auth-footer">
-          © 2025{" "}
+          © 2023{" "}
           <span className="font-bold text-gradient-brand">
             BlackGold Cherish
           </span>{" "}

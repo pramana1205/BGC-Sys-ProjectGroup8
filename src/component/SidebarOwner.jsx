@@ -58,7 +58,7 @@ export default function SidebarOwner() {
       </nav>
 
       <p className="text-[10px] text-gray-300 text-center mt-6">
-        © 2025 BlackGold Cherish
+        © 2023 BlackGold Cherish
       </p>
     </div>
   );

@@ -74,7 +74,7 @@ function Footer() {
         {/* Bottom row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
-            © {new Date().getFullYear()} BlackGold Cherish. All rights reserved.
+            © 2023 BlackGold Cherish. All rights reserved.
           </p>
           <p className="text-xs" style={{ color: "rgba(184,134,11,0.55)" }}>
             Dibuat dengan ❤️ oleh Kelompok 8
