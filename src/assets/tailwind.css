@@ -476,3 +476,129 @@
   background: linear-gradient(90deg, transparent, #b8860b, #ffd700, #dc143c, transparent);
   border-radius: 2px;
 }
+
+/* ═══════════════════════════════════════════
+   AUTH DECORATIVE ORNAMENTS
+═══════════════════════════════════════════ */
+
+/* ── Dot grid texture ── */
+.auth-dotgrid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(220,20,60,0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── 4th orb (gold tone) ── */
+.auth-orb4 {
+  width: 200px;
+  height: 200px;
+  top: 60%;
+  left: 5%;
+  background: rgba(201,162,39,0.13);
+  animation-delay: 6s;
+}
+
+/* ── Corner flourish SVGs ── */
+.auth-corner {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  pointer-events: none;
+  z-index: 1;
+}
+.auth-corner--tl { top: 0;    left: 0; }
+.auth-corner--tr { top: 0;    right: 0; transform: scaleX(-1); }
+.auth-corner--br { bottom: 0; right: 0; transform: scale(-1); }
+.auth-corner--bl { bottom: 0; left: 0;  transform: scaleY(-1); }
+
+/* ── Floating diamond shapes ── */
+@keyframes floatDiamond {
+  0%   { transform: rotate(45deg) translateY(0)   scale(1);    opacity: 0.55; }
+  50%  { transform: rotate(45deg) translateY(-18px) scale(1.1); opacity: 0.8; }
+  100% { transform: rotate(45deg) translateY(0)   scale(1);    opacity: 0.55; }
+}
+
+.auth-diamond {
+  position: absolute;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1;
+  transform: rotate(45deg);
+  animation: floatDiamond linear infinite;
+}
+.auth-diamond--1 {
+  width: 14px; height: 14px;
+  top: 12%;  left: 8%;
+  background: linear-gradient(135deg, #c9a227, #f0d080);
+  animation-duration: 5s;
+  animation-delay: 0s;
+  box-shadow: 0 0 8px rgba(201,162,39,0.45);
+}
+.auth-diamond--2 {
+  width: 10px; height: 10px;
+  top: 25%;  right: 10%;
+  background: linear-gradient(135deg, #dc143c, #ff6b9d);
+  animation-duration: 7s;
+  animation-delay: 1.5s;
+  box-shadow: 0 0 6px rgba(220,20,60,0.4);
+}
+.auth-diamond--3 {
+  width: 8px;  height: 8px;
+  top: 70%;  left: 6%;
+  background: linear-gradient(135deg, #e91e8c, #ffb3cf);
+  animation-duration: 6s;
+  animation-delay: 3s;
+  box-shadow: 0 0 6px rgba(233,30,140,0.4);
+}
+.auth-diamond--4 {
+  width: 12px; height: 12px;
+  bottom: 15%; right: 8%;
+  background: linear-gradient(135deg, #c9a227, #dc143c);
+  animation-duration: 8s;
+  animation-delay: 0.5s;
+  box-shadow: 0 0 8px rgba(201,162,39,0.35);
+}
+.auth-diamond--5 {
+  width: 7px;  height: 7px;
+  top: 50%;  left: 92%;
+  background: linear-gradient(135deg, #f0d080, #e91e8c);
+  animation-duration: 5.5s;
+  animation-delay: 2s;
+}
+
+/* ── Sparkle characters ── */
+@keyframes sparklePulse {
+  0%, 100% { opacity: 0.15; transform: scale(0.9) rotate(0deg); }
+  50%       { opacity: 0.75; transform: scale(1.25) rotate(20deg); }
+}
+
+.auth-sparkle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  font-size: 1rem;
+  animation: sparklePulse ease-in-out infinite;
+}
+.auth-sparkle--1 { top: 8%;   left: 18%;  color: #c9a227; animation-duration: 3.2s; animation-delay: 0s; }
+.auth-sparkle--2 { top: 18%;  right: 16%; color: #dc143c; animation-duration: 2.8s; animation-delay: 1s; font-size: 0.75rem; }
+.auth-sparkle--3 { top: 40%;  left: 4%;   color: #e91e8c; animation-duration: 4s;   animation-delay: 0.5s; font-size: 1.1rem; }
+.auth-sparkle--4 { bottom: 22%; left: 14%;  color: #c9a227; animation-duration: 3.6s; animation-delay: 1.5s; font-size: 0.85rem; }
+.auth-sparkle--5 { bottom: 12%; right: 14%; color: #e91e8c; animation-duration: 2.5s; animation-delay: 2s; }
+.auth-sparkle--6 { top: 55%;  right: 5%;  color: #c9a227; animation-duration: 3.9s; animation-delay: 0.8s; font-size: 1.2rem; }
+
+/* ── Side arc lines ── */
+.auth-arc {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 70vh;
+  width: 80px;
+  pointer-events: none;
+  z-index: 1;
+}
+.auth-arc--left  { left: 0; }
+.auth-arc--right { right: 0; }
+
