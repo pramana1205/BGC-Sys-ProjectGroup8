@@ -135,13 +135,41 @@ export default function AuthLayout() {
         </div>
 
         {/* Footer */}
-        <p className="auth-footer">
-          © 2023{" "}
-          <span className="font-bold text-gradient-brand">
+        <div
+          className="mt-6 py-4 px-6 text-center rounded-2xl"
+          style={{
+            background: "linear-gradient(135deg, #1a0a10 0%, #2d1020 50%, #1a0a10 100%)",
+            border: "1px solid rgba(184,134,11,0.2)",
+          }}
+        >
+          <p
+            className="font-bold text-base mb-0.5"
+            style={{
+              fontFamily: "var(--font-cinzel, serif)",
+              background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
             BlackGold Cherish
-          </span>{" "}
-          • All rights reserved
-        </p>
+          </p>
+          <p
+            className="text-xs italic"
+            style={{
+              fontFamily: "var(--font-cormorant, serif)",
+              color: "rgba(255,210,230,0.6)",
+            }}
+          >
+            Koleksi Fashion Eksklusif untuk Wanita Modern dan Elegan
+          </p>
+          <p
+            className="text-[9px] mt-1.5"
+            style={{ color: "rgba(255,255,255,0.2)" }}
+          >
+            © 2023 BlackGold Cherish. All rights reserved.
+          </p>
+        </div>
       </div>
     </div>
   );

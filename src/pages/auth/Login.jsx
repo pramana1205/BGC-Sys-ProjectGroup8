@@ -59,9 +59,16 @@ export default function Login() {
     });
 
     if (authError) {
-      setError(authError.message === "Invalid login credentials"
-        ? "Email atau password salah"
-        : authError.message);
+      const msg = authError.message;
+      let friendlyError = msg;
+      if (msg === "Invalid login credentials") {
+        friendlyError = "Email atau password salah";
+      } else if (msg === "Email not confirmed") {
+        friendlyError = "Email belum dikonfirmasi. Silakan cek inbox/spam dan klik link verifikasi.";
+      } else if (msg.includes("rate limit") || msg.includes("after")) {
+        friendlyError = "Terlalu banyak percobaan. Tunggu beberapa menit lalu coba lagi.";
+      }
+      setError(friendlyError);
       setLoading(false);
       return;
     }

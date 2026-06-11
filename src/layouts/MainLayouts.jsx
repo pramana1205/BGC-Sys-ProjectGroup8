@@ -19,65 +19,38 @@ function Footer() {
   return (
     <footer
       style={{
-        background: "linear-gradient(135deg, #1a0a10 0%, #2d1420 60%, #1a0a10 100%)",
-        borderTop: "1px solid rgba(184,134,11,0.25)",
+        background: "linear-gradient(135deg, #1a0a10 0%, #2d1020 50%, #1a0a10 100%)",
+        borderTop: "1px solid rgba(184,134,11,0.2)",
       }}
-      className="mt-auto"
+      className="mt-auto py-6 px-6 text-center"
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 py-10">
-        {/* Top row */}
-        <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 mb-8">
-          {/* Brand */}
-          <div className="text-center sm:text-left">
-            <p
-              className="text-xl font-bold mb-1"
-              style={{
-                fontFamily: "var(--font-cinzel, serif)",
-                background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              BlackGold Cherish
-            </p>
-            <p className="text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>
-              Fashion Pilihan, Kualitas Terbaik
-            </p>
-          </div>
-
-          {/* Quick links */}
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-            {NAV_ITEMS.map(({ path, title }) => (
-              <a
-                key={path}
-                href={path}
-                className="text-xs transition-opacity hover:opacity-100"
-                style={{ color: "rgba(255,255,255,0.55)" }}
-              >
-                {title}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div
-          style={{
-            height: 1,
-            background:
-              "linear-gradient(90deg, transparent, rgba(184,134,11,0.35), transparent)",
-          }}
-          className="mb-6"
-        />
-
-        {/* Bottom row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-          <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
-            © 2023 BlackGold Cherish. All rights reserved.
-          </p>
-        </div>
-      </div>
+      <p
+        className="font-bold text-lg mb-1"
+        style={{
+          fontFamily: "var(--font-cinzel, serif)",
+          background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}
+      >
+        BlackGold Cherish
+      </p>
+      <p
+        className="text-sm italic"
+        style={{
+          fontFamily: "var(--font-cormorant, serif)",
+          color: "rgba(255,210,230,0.6)",
+        }}
+      >
+        Koleksi Fashion Eksklusif untuk Wanita Modern dan Elegan
+      </p>
+      <p
+        className="text-[10px] mt-2"
+        style={{ color: "rgba(255,255,255,0.25)" }}
+      >
+        © 2023 BlackGold Cherish. All rights reserved.
+      </p>
     </footer>
   );
 }

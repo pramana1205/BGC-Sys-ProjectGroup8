@@ -117,9 +117,38 @@ export default function MobileNav({ role = "admin" }) {
               Keluar dari Akun
             </button>
 
-            <p className="text-[10px] text-gray-300 text-center mt-4">
-              © 2023 BlackGold Cherish
-            </p>
+            <div
+              className="mt-4 py-3 px-3 text-center rounded-xl"
+              style={{
+                background: "linear-gradient(135deg, #1a0a10 0%, #2d1020 50%, #1a0a10 100%)",
+                border: "1px solid rgba(184,134,11,0.2)",
+              }}
+            >
+              <p
+                className="font-bold text-xs mb-0.5"
+                style={{
+                  fontFamily: "var(--font-cinzel, serif)",
+                  background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                BlackGold Cherish
+              </p>
+              <p
+                className="text-[9px] italic"
+                style={{ fontFamily: "var(--font-cormorant, serif)", color: "rgba(255,210,230,0.5)" }}
+              >
+                Koleksi Fashion Eksklusif
+              </p>
+              <p
+                className="text-[8px] mt-1"
+                style={{ color: "rgba(255,255,255,0.2)" }}
+              >
+                © 2023 BlackGold Cherish
+              </p>
+            </div>
           </div>
         </div>
       )}

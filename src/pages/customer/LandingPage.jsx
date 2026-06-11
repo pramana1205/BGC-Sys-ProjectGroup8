@@ -324,57 +324,36 @@ export default function LandingPage() {
 
       {/* ══ FOOTER ══ */}
       <footer
-        className="px-5 pt-12 pb-7"
+        className="py-6 px-5 text-center"
         style={{
-          background:
-            "linear-gradient(135deg, #1a0a10 0%, #2d1020 50%, #1a0a10 100%)",
-          color: "rgba(255,235,245,0.8)",
+          background: "linear-gradient(135deg, #1a0a10 0%, #2d1020 50%, #1a0a10 100%)",
+          borderTop: "1px solid rgba(184,134,11,0.2)",
         }}
       >
-        <div className="footer-border-gold max-w-[1100px] mx-auto grid grid-cols-2 gap-10 pb-8 max-sm:grid-cols-1">
-          {/* Brand info */}
-          <div>
-            <div className="text-gradient-footer font-[family-name:var(--font-cinzel)] text-xl font-bold mb-2">
-              BlackGold Cherish
-            </div>
-            <div
-              className="font-[family-name:var(--font-cormorant)] italic text-sm"
-              style={{ color: "rgba(255,210,230,0.6)" }}
-            >
-              Koleksi Fashion Eksklusif untuk Wanita Modern dan Elegan
-            </div>
-          </div>
-
-          {/* Nav links */}
-          <div>
-            <div
-              className="font-[family-name:var(--font-cinzel)] text-[0.75rem] tracking-[0.2em] uppercase mb-3.5"
-              style={{ color: "rgba(255,215,0,0.7)" }}
-            >
-              Koleksi
-            </div>
-            <ul className="flex flex-col gap-2 list-none p-0">
-              {["Blus", "Gaun", "Baju Kurung"].map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleKoleksi();
-                    }}
-                    className="footer-nav-link font-[family-name:var(--font-cormorant)] text-[0.95rem] no-underline"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
         <p
-          className="max-w-[1100px] mx-auto mt-5 text-center font-[family-name:var(--font-cormorant)] text-sm tracking-[0.06em]"
-          style={{ color: "rgba(255,210,230,0.4)" }}
+          className="font-bold text-lg mb-1"
+          style={{
+            fontFamily: "var(--font-cinzel, serif)",
+            background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
+        >
+          BlackGold Cherish
+        </p>
+        <p
+          className="text-sm italic"
+          style={{
+            fontFamily: "var(--font-cormorant, serif)",
+            color: "rgba(255,210,230,0.6)",
+          }}
+        >
+          Koleksi Fashion Eksklusif untuk Wanita Modern dan Elegan
+        </p>
+        <p
+          className="text-[10px] mt-2"
+          style={{ color: "rgba(255,255,255,0.25)" }}
         >
           © 2023 BlackGold Cherish. All rights reserved.
         </p>

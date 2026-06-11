@@ -54,6 +54,43 @@ export default function Akun() {
         .single();
 
       if (userErr || !userRow) {
+        // Profile row missing — auto-create from auth data (handles email-confirm race condition & RLS issues)
+        if (authUser) {
+          const fallbackName = authUser.user_metadata?.full_name
+            || authUser.user_metadata?.name
+            || authUser.email?.split("@")[0]
+            || "Pelanggan";
+
+          const newProfile = {
+            id:       authUser.id,
+            nama:     fallbackName,
+            email:    authUser.email,
+            no_hp:    authUser.user_metadata?.phone || "",
+            role:     "customer",
+            provider: authUser.app_metadata?.provider || "email",
+          };
+
+          const { error: upsertErr } = await supabase
+            .from("users")
+            .upsert(newProfile, { onConflict: "id" });
+
+          if (upsertErr) {
+            setError("Gagal memuat data profil.");
+            setLoading(false);
+            return;
+          }
+
+          setProfile(newProfile);
+          setForm({
+            nama:   newProfile.nama,
+            email:  newProfile.email,
+            no_hp:  newProfile.no_hp,
+            alamat: "",
+          });
+          setLoading(false);
+          return;
+        }
+
         setError("Gagal memuat data profil.");
         setLoading(false);
         return;

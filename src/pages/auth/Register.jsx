@@ -55,6 +55,12 @@ export default function Register() {
       const { data, error } = await supabase.auth.signUp({
         email: dataForm.email,
         password: dataForm.password,
+        options: {
+          data: {
+            full_name: dataForm.fullName,
+            phone:     dataForm.phoneNumber,
+          },
+        },
       });
 
       if (error) {
