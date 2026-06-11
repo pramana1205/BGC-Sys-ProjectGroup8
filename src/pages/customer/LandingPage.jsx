@@ -376,7 +376,7 @@ export default function LandingPage() {
           className="max-w-[1100px] mx-auto mt-5 text-center font-[family-name:var(--font-cormorant)] text-sm tracking-[0.06em]"
           style={{ color: "rgba(255,210,230,0.4)" }}
         >
-          © 2024 BlackGold Cherish. All rights reserved.
+          © 2023 BlackGold Cherish. All rights reserved.
         </p>
       </footer>
     </div> 
