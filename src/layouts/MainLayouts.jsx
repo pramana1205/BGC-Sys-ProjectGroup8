@@ -76,9 +76,6 @@ function Footer() {
           <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
             © 2023 BlackGold Cherish. All rights reserved.
           </p>
-          <p className="text-xs" style={{ color: "rgba(184,134,11,0.55)" }}>
-            Dibuat dengan ❤️ oleh Kelompok 8
-          </p>
         </div>
       </div>
     </footer>
