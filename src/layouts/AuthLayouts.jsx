@@ -3,16 +3,13 @@ import { Outlet } from "react-router-dom";
 export default function AuthLayout() {
   return (
     <div className="auth-page">
-      {/* ── Dot-grid texture overlay ── */}
       <div className="auth-dotgrid" />
 
-      {/* ── Floating colour orbs ── */}
       <div className="auth-orb1 absolute rounded-full blur-3xl animate-float-orb" />
       <div className="auth-orb2 absolute rounded-full blur-3xl animate-float-orb" />
       <div className="auth-orb3 absolute rounded-full blur-3xl animate-float-orb" />
       <div className="auth-orb4 absolute rounded-full blur-3xl animate-float-orb" />
 
-      {/* ── Corner flourishes (SVG) ── */}
       <svg className="auth-corner auth-corner--tl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M10 10 Q60 10 60 60" stroke="url(#g1)" strokeWidth="1.2" strokeDasharray="4 3" fill="none"/>
         <path d="M10 10 Q10 60 60 60" stroke="url(#g1)" strokeWidth="1.2" strokeDasharray="4 3" fill="none"/>
@@ -76,14 +73,12 @@ export default function AuthLayout() {
         </defs>
       </svg>
 
-      {/* ── Floating diamonds ── */}
       <div className="auth-diamond auth-diamond--1" />
       <div className="auth-diamond auth-diamond--2" />
       <div className="auth-diamond auth-diamond--3" />
       <div className="auth-diamond auth-diamond--4" />
       <div className="auth-diamond auth-diamond--5" />
 
-      {/* ── Sparkle dots ── */}
       <div className="auth-sparkle auth-sparkle--1">✦</div>
       <div className="auth-sparkle auth-sparkle--2">✦</div>
       <div className="auth-sparkle auth-sparkle--3">✧</div>
@@ -91,7 +86,6 @@ export default function AuthLayout() {
       <div className="auth-sparkle auth-sparkle--5">✧</div>
       <div className="auth-sparkle auth-sparkle--6">✦</div>
 
-      {/* ── Thin arc lines ── */}
       <svg className="auth-arc auth-arc--left" viewBox="0 0 100 400" fill="none">
         <path d="M80 0 Q-20 200 80 400" stroke="url(#arcL)" strokeWidth="1" fill="none" opacity="0.35"/>
         <path d="M60 0 Q-40 200 60 400" stroke="url(#arcL)" strokeWidth="0.7" fill="none" opacity="0.2"/>
@@ -116,10 +110,8 @@ export default function AuthLayout() {
         </defs>
       </svg>
 
-      {/* ── Main content ── */}
       <div className="auth-container">
-        {/* Brand header */}
-        <div className="auth-header">
+        <div className="auth-header flex flex-col items-center">
           <h1 className="auth-brand text-gradient-brand">
             BlackGold Cherish
           </h1>
@@ -129,47 +121,17 @@ export default function AuthLayout() {
           </p>
         </div>
 
-        {/* Form card */}
         <div className="auth-card">
           <Outlet />
         </div>
 
-        {/* Footer */}
-        <div
-          className="mt-6 py-4 px-6 text-center rounded-2xl"
-          style={{
-            background: "linear-gradient(135deg, #1a0a10 0%, #2d1020 50%, #1a0a10 100%)",
-            border: "1px solid rgba(184,134,11,0.2)",
-          }}
-        >
-          <p
-            className="font-bold text-base mb-0.5"
-            style={{
-              fontFamily: "var(--font-cinzel, serif)",
-              background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
+        <p className="auth-footer">
+          © 2023{" "}
+          <span className="font-bold text-gradient-brand">
             BlackGold Cherish
-          </p>
-          <p
-            className="text-xs italic"
-            style={{
-              fontFamily: "var(--font-cormorant, serif)",
-              color: "rgba(255,210,230,0.6)",
-            }}
-          >
-            Koleksi Fashion Eksklusif untuk Wanita Modern dan Elegan
-          </p>
-          <p
-            className="text-[9px] mt-1.5"
-            style={{ color: "rgba(255,255,255,0.2)" }}
-          >
-            © 2023 BlackGold Cherish. All rights reserved.
-          </p>
-        </div>
+          </span>{" "}
+          • All rights reserved
+        </p>
       </div>
     </div>
   );

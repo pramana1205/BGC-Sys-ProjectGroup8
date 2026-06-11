@@ -1,55 +1,126 @@
+import { useEffect, useState } from "react";
 import { FaShoppingCart, FaTruck, FaBan, FaDollarSign } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { MdArrowOutward } from "react-icons/md";
-import { GoldDivider, FloralOrn, DiamondPattern, BrandStamp } from "../../component/Decorations";
+import { GoldDivider, FloralOrn, DiamondPattern } from "../../component/Decorations";
+import WelcomeToast from "../../component/WelcomeToast";
+import { supabase } from "../../lib/supabase";
 
-const summaryCards = [
-  {
-    title: "Total Pesanan",
-    value: "75",
-    icon: FaShoppingCart,
-    bgColor: "bg-blue-100",
-    color: "text-blue-600",
-    link: "/orders"
-  },
-  {
-    title: "Pesanan Terkirim",
-    value: "58",
-    icon: FaTruck,
-    bgColor: "bg-green-100",
-    color: "text-green-600",
-    link: "/orders"
-  },
-  {
-    title: "Pesanan Batal",
-    value: "5",
-    icon: FaBan,
-    bgColor: "bg-red-100",
-    color: "text-red-600",
-    link: "/orders"
-  },
-  {
-    title: "Total Pendapatan",
-    value: "Rp 128M",
-    icon: FaDollarSign,
-    bgColor: "bg-purple-100",
-    color: "text-purple-600",
-    link: null
-  },
-];
-
-const quickStats = [
-  { label: "Pelanggan Aktif", value: "342", trend: "+8.2%" },
-  { label: "Produk Stok Rendah", value: "12", trend: "-3%" },
-  { label: "Feedback Baru", value: "24", trend: "+12%" },
-  { label: "Pesanan Hari Ini", value: "8", trend: "+5%" },
-];
+const toRp = (n) => "Rp " + Number(n || 0).toLocaleString("id-ID");
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({
+    totalPesanan: 0,
+    pesananTerkirim: 0,
+    pesananBatal: 0,
+    totalPendapatan: 0,
+    pelangganAktif: 0,
+    totalProduk: 0,
+    feedbackBaru: 0,
+    pesananHariIni: 0,
+  });
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+
+        const { data: orders, error: ordersErr } = await supabase
+          .from("orders")
+          .select("total_harga, status_pesanan, created_at");
+        if (ordersErr) throw ordersErr;
+
+        const { count: usersCount, error: usersErr } = await supabase
+          .from("users")
+          .select("*", { count: "exact", head: true });
+        if (usersErr) throw usersErr;
+
+        const { count: productsCount, error: prodErr } = await supabase
+          .from("products")
+          .select("*", { count: "exact", head: true });
+        if (prodErr) throw prodErr;
+
+        const { count: feedbackCount, error: fbErr } = await supabase
+          .from("feedbacks")
+          .select("*", { count: "exact", head: true });
+        if (fbErr) throw fbErr;
+
+        const totalPesanan = orders?.length || 0;
+        const pesananTerkirim = orders?.filter(o => ["dikirim", "selesai"].includes(o.status_pesanan)).length || 0;
+        const pesananBatal = orders?.filter(o => o.status_pesanan === "dibatalkan").length || 0;
+        const totalPendapatan = orders?.filter(o => o.status_pesanan !== "dibatalkan").reduce((sum, o) => sum + (o.total_harga || 0), 0) || 0;
+
+        const todayStr = new Date().toDateString();
+        const pesananHariIni = orders?.filter(o => {
+          return o.created_at && new Date(o.created_at).toDateString() === todayStr;
+        }).length || 0;
+
+        setData({
+          totalPesanan,
+          pesananTerkirim,
+          pesananBatal,
+          totalPendapatan,
+          pelangganAktif: usersCount || 0,
+          totalProduk: productsCount || 0,
+          feedbackBaru: feedbackCount || 0,
+          pesananHariIni,
+        });
+      } catch (err) {
+        console.error("Error loading admin dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const summaryCards = [
+    {
+      title: "Total Pesanan",
+      value: loading ? "..." : data.totalPesanan,
+      icon: FaShoppingCart,
+      bgColor: "bg-blue-100",
+      color: "text-blue-600",
+      link: "/orders"
+    },
+    {
+      title: "Pesanan Terkirim",
+      value: loading ? "..." : data.pesananTerkirim,
+      icon: FaTruck,
+      bgColor: "bg-green-100",
+      color: "text-green-600",
+      link: "/orders"
+    },
+    {
+      title: "Pesanan Batal",
+      value: loading ? "..." : data.pesananBatal,
+      icon: FaBan,
+      bgColor: "bg-red-100",
+      color: "text-red-600",
+      link: "/orders"
+    },
+    {
+      title: "Total Pendapatan",
+      value: loading ? "..." : toRp(data.totalPendapatan),
+      icon: FaDollarSign,
+      bgColor: "bg-purple-100",
+      color: "text-purple-600",
+      link: null
+    },
+  ];
+
+  const quickStats = [
+    { label: "Pelanggan Aktif", value: loading ? "..." : data.pelangganAktif, trend: "User" },
+    { label: "Katalog Produk", value: loading ? "..." : data.totalProduk, trend: "Item" },
+    { label: "Feedback Baru", value: loading ? "..." : data.feedbackBaru, trend: "Ulasan" },
+    { label: "Pesanan Hari Ini", value: loading ? "..." : data.pesananHariIni, trend: "Hari Ini" },
+  ];
 
   return (
     <div>
+      <WelcomeToast />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {summaryCards.map((card) => {
           const IconComponent = card.icon;
@@ -80,13 +151,12 @@ export default function Dashboard() {
             <p className="text-xs text-gray-400 mb-2">{stat.label}</p>
             <div className="flex items-end justify-between">
               <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
-              <span className="text-xs text-green-600 font-semibold">{stat.trend}</span>
+              <span className="text-xs text-indigo-600 font-semibold">{stat.trend}</span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Decorative separator */}
       <div className="flex items-center gap-4 my-2">
         <FloralOrn size={28} opacity={0.2} />
         <GoldDivider opacity={0.18} className="flex-1" />
@@ -151,7 +221,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+      <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 mt-6">
         <p className="text-sm text-amber-900">
           <span className="font-bold">💡 Tip:</span> Klik pada setiap item untuk melihat detail dan mengelola data Anda dengan lebih baik.
         </p>

@@ -23,16 +23,16 @@ export default function Akun() {
   const [form, setForm]         = useState({ nama: "", email: "", no_hp: "", alamat: "" });
   const [stats, setStats]       = useState({ total: 0, selesai: 0, proses: 0, transaksi: 0 });
 
-  // ── Fetch user profile + order stats ──────────────────────────────────────
+  
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError("");
 
-      // 1. Get logged-in user from Supabase Auth
+      
       const { data: authData, error: authErr } = await supabase.auth.getUser();
       if (authErr || !authData?.user) {
-        // Fallback: check localStorage for userId (hardcoded admin/owner bypass stores id)
+        
         const userId = localStorage.getItem("userToken") || sessionStorage.getItem("userToken");
         if (!userId || userId === "admin-token" || userId === "owner-token") {
           setError("Sesi tidak valid. Silakan login ulang.");
@@ -46,7 +46,7 @@ export default function Akun() {
         || localStorage.getItem("userToken")
         || sessionStorage.getItem("userToken");
 
-      // 2. Fetch profile from users table
+      
       const { data: userRow, error: userErr } = await supabase
         .from("users")
         .select("*")
@@ -54,7 +54,7 @@ export default function Akun() {
         .single();
 
       if (userErr || !userRow) {
-        // Profile row missing — auto-create from auth data (handles email-confirm race condition & RLS issues)
+        
         if (authUser) {
           const fallbackName = authUser.user_metadata?.full_name
             || authUser.user_metadata?.name
@@ -104,7 +104,7 @@ export default function Akun() {
         alamat: userRow.alamat || "",
       });
 
-      // 3. Fetch order stats (if orders table exists)
+      
       const { data: orders } = await supabase
         .from("pesanan")
         .select("status, total_harga")
@@ -126,7 +126,7 @@ export default function Akun() {
     fetchData();
   }, []);
 
-  // ── Save edited profile ───────────────────────────────────────────────────
+  
   const handleSave = async () => {
     setSaving(true);
     const userId = profile?.id;
@@ -165,7 +165,7 @@ export default function Akun() {
     { label: "Total Transaksi", value: stats.transaksi > 0 ? toRp(stats.transaksi) : "—" },
   ];
 
-  // ── Join date formatting ──────────────────────────────────────────────────
+  
   const joinDate = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString("id-ID", { month: "long", year: "numeric" })
     : "—";
@@ -195,14 +195,14 @@ export default function Akun() {
 
       <div className="px-6 sm:px-10 pb-16 max-w-4xl mx-auto">
 
-        {/* Error Banner */}
+        
         {error && (
           <div className="mb-6 px-4 py-3 rounded-2xl text-sm font-medium" style={{ background: "rgba(239,68,68,0.10)", color: "#dc2626" }}>
             ⚠ {error}
           </div>
         )}
 
-        {/* Loading Skeleton */}
+        
         {loading ? (
           <div className="space-y-4 animate-pulse">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -214,7 +214,7 @@ export default function Akun() {
           </div>
         ) : profile ? (
           <>
-            {/* Stats */}
+            
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
               {statItems.map((s) => (
                 <div key={s.label} className="bg-white rounded-2xl border border-pink-100 px-5 py-5">
@@ -224,11 +224,11 @@ export default function Akun() {
               ))}
             </div>
 
-            {/* Profile Card */}
+            
             <div className="bg-white rounded-3xl border border-pink-100 p-8 mb-6">
               <div className="flex items-center justify-between mb-7 flex-wrap gap-3">
                 <div className="flex items-center gap-5">
-                  {/* Avatar */}
+                  
                   {profile.avatar_url ? (
                     <img
                       src={profile.avatar_url}
@@ -291,7 +291,7 @@ export default function Akun() {
               </div>
             </div>
 
-            {/* Quick Actions */}
+            
             <div className="bg-white rounded-3xl border border-pink-100 p-6">
               <p className="font-semibold text-sm mb-4" style={{ color: "#1a0a10" }}>Aksi Cepat</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -314,7 +314,7 @@ export default function Akun() {
           </>
         ) : null}
 
-        {/* Decorative divider before logout */}
+        
         <div className="mt-8 mb-2">
           <GoldDivider opacity={0.25} />
           <div className="flex justify-center gap-8 mt-3 mb-1">

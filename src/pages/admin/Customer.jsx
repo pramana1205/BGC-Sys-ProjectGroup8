@@ -1,17 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
 
-const customers = [
-  { id: 1,  nama: "Sari Dewi",      email: "sari.dewi@email.com",      telepon: "081234567890", kota: "Jakarta Selatan", totalPesanan: 4,  totalBelanja: 3108600, loyalitas: "Gold",   bergabung: "Jan 2024" },
-  { id: 2,  nama: "Rina Marlina",   email: "rina.marlina@email.com",    telepon: "082345678901", kota: "Bandung",         totalPesanan: 2,  totalBelanja: 870000,  loyalitas: "Silver", bergabung: "Mar 2024" },
-  { id: 3,  nama: "Dewi Anggraini", email: "dewi.a@email.com",          telepon: "083456789012", kota: "Surabaya",        totalPesanan: 6,  totalBelanja: 5240000, loyalitas: "Gold",   bergabung: "Nov 2023" },
-  { id: 4,  nama: "Mega Setiawati", email: "mega.s@email.com",          telepon: "084567890123", kota: "Yogyakarta",      totalPesanan: 1,  totalBelanja: 550000,  loyalitas: "Bronze", bergabung: "Mei 2024" },
-  { id: 5,  nama: "Laila Rahma",    email: "laila.r@email.com",         telepon: "085678901234", kota: "Medan",           totalPesanan: 3,  totalBelanja: 1760000, loyalitas: "Silver", bergabung: "Feb 2024" },
-  { id: 6,  nama: "Putri Nandini",  email: "putri.n@email.com",         telepon: "086789012345", kota: "Semarang",        totalPesanan: 1,  totalBelanja: 320000,  loyalitas: "Bronze", bergabung: "Jun 2024" },
-  { id: 7,  nama: "Tari Widiastuti",email: "tari.w@email.com",          telepon: "087890123456", kota: "Makassar",        totalPesanan: 2,  totalBelanja: 940000,  loyalitas: "Silver", bergabung: "Apr 2024" },
-  { id: 8,  nama: "Nadia Kusuma",   email: "nadia.k@email.com",         telepon: "088901234567", kota: "Palembang",       totalPesanan: 5,  totalBelanja: 4120000, loyalitas: "Gold",   bergabung: "Agu 2023" },
-];
+const toRp = (n) => "Rp " + Number(n).toLocaleString("id-ID");
 
-const toRp = (n) => "Rp " + n.toLocaleString("id-ID");
+
+const getLoyalitas = (totalBelanja) => {
+  if (totalBelanja >= 3000000) return "Gold";
+  if (totalBelanja >= 1000000) return "Silver";
+  return "Bronze";
+};
 
 const loyaltisBadge = {
   Gold:   { color: "#b8860b", bg: "rgba(184,134,11,.12)",  icon: "🥇" },
@@ -19,44 +16,121 @@ const loyaltisBadge = {
   Bronze: { color: "#92400e", bg: "rgba(146,64,14,.12)",   icon: "🥉" },
 };
 
-export default function DataPelanggan() {
-  const [search, setSearch] = useState("");
-  const [filterLoyalitas, setFilterLoyalitas] = useState("Semua");
-  const [selected, setSelected] = useState(null);
+const formatTanggal = (isoString) => {
+  if (!isoString) return "—";
+  return new Date(isoString).toLocaleDateString("id-ID", {
+    day: "numeric", month: "short", year: "numeric",
+  });
+};
 
-  const filtered = customers.filter(c => {
+export default function DataPelanggan() {
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState("");
+  const [search, setSearch]       = useState("");
+  const [filterLoyalitas, setFilterLoyalitas] = useState("Semua");
+  const [selected, setSelected]   = useState(null);
+
+  
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      setLoading(true);
+      setError("");
+
+      
+      const { data: users, error: userErr } = await supabase
+        .from("users")
+        .select("id, nama, email, no_hp, alamat, created_at, avatar_url")
+        .eq("role", "customer")
+        .order("created_at", { ascending: false });
+
+      if (userErr) {
+        setError("Gagal memuat data pelanggan: " + userErr.message);
+        setLoading(false);
+        return;
+      }
+
+      
+      const enriched = await Promise.all(
+        (users || []).map(async (user) => {
+          const { data: orders } = await supabase
+            .from("pesanan")
+            .select("total_harga, status")
+            .eq("user_id", user.id);
+
+          const totalPesanan  = orders?.length || 0;
+          const totalBelanja  = orders?.reduce((sum, o) => sum + (o.total_harga || 0), 0) || 0;
+          const loyalitas     = getLoyalitas(totalBelanja);
+
+          return {
+            ...user,
+            totalPesanan,
+            totalBelanja,
+            loyalitas,
+          };
+        })
+      );
+
+      setCustomers(enriched);
+      setLoading(false);
+    };
+
+    fetchCustomers();
+  }, []);
+
+  
+  const filtered = customers.filter((c) => {
+    const q = search.toLowerCase();
     const matchSearch =
-      c.nama.toLowerCase().includes(search.toLowerCase()) ||
-      c.email.toLowerCase().includes(search.toLowerCase()) ||
-      c.kota.toLowerCase().includes(search.toLowerCase());
+      (c.nama  || "").toLowerCase().includes(q) ||
+      (c.email || "").toLowerCase().includes(q) ||
+      (c.no_hp || "").toLowerCase().includes(q);
     const matchFilter = filterLoyalitas === "Semua" || c.loyalitas === filterLoyalitas;
     return matchSearch && matchFilter;
   });
 
+  
   const totalGold   = customers.filter(c => c.loyalitas === "Gold").length;
   const totalSilver = customers.filter(c => c.loyalitas === "Silver").length;
-  const totalBronze = customers.filter(c => c.loyalitas === "Bronze").length;
   const totalOmzet  = customers.reduce((a, c) => a + c.totalBelanja, 0);
+
+  
+  const SkeletonRow = () => (
+    <tr className="border-b border-pink-50 animate-pulse">
+      {[...Array(7)].map((_, i) => (
+        <td key={i} className="px-5 py-4">
+          <div className="h-4 bg-pink-100 rounded-full w-full" />
+        </td>
+      ))}
+    </tr>
+  );
 
   return (
     <div>
-      {/* Header */}
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-playfair,serif)", color: "#1a0a10" }}>
           Data Pelanggan
         </h1>
         <p className="text-sm mt-1" style={{ color: "#a07080" }}>
-          Informasi pelanggan dan tingkat loyalitas
+          Data real-time dari database • {loading ? "Memuat..." : `${customers.length} pelanggan terdaftar`}
         </p>
       </div>
 
-      {/* Stat cards */}
+      
+      {error && (
+        <div className="mb-6 px-4 py-3 rounded-2xl text-sm font-medium" style={{ background: "rgba(239,68,68,0.10)", color: "#dc2626" }}>
+          ⚠ {error}
+        </div>
+      )}
+
+      
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Total Pelanggan", value: customers.length,      color: "#b8860b" },
-          { label: "🥇 Gold",         value: totalGold,             color: "#b8860b" },
-          { label: "🥈 Silver",       value: totalSilver,           color: "#6b7280" },
-          { label: "Total Omzet",     value: toRp(totalOmzet),      color: "#16a34a" },
+          { label: "Total Pelanggan", value: loading ? "—" : customers.length, color: "#b8860b" },
+          { label: "🥇 Gold",         value: loading ? "—" : totalGold,         color: "#b8860b" },
+          { label: "🥈 Silver",       value: loading ? "—" : totalSilver,       color: "#6b7280" },
+          { label: "Total Omzet",     value: loading ? "—" : toRp(totalOmzet),  color: "#16a34a" },
         ].map(s => (
           <div key={s.label} className="bg-white rounded-2xl border border-pink-100 px-5 py-5">
             <p className="font-bold text-xl" style={{ color: s.color }}>{s.value}</p>
@@ -65,12 +139,12 @@ export default function DataPelanggan() {
         ))}
       </div>
 
-      {/* Search & filter */}
+      
       <div className="flex flex-wrap gap-3 mb-6 items-center">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <input
             type="text"
-            placeholder="Cari nama, email, atau kota..."
+            placeholder="Cari nama, email, atau telepon..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full border border-pink-200 rounded-full px-5 py-2.5 text-sm outline-none focus:border-pink-400"
@@ -95,76 +169,82 @@ export default function DataPelanggan() {
         </div>
       </div>
 
-      {/* Table */}
+      
       <div className="bg-white rounded-3xl border border-pink-100 overflow-hidden">
         <div className="overflow-x-auto">
-        <table className="w-full text-sm min-w-[800px]">
-          <thead>
-            <tr style={{ background: "rgba(255,240,246,0.7)", borderBottom: "1px solid #fce7f3" }}>
-              {["Pelanggan", "Kontak", "Kota", "Total Pesanan", "Total Belanja", "Loyalitas", "Bergabung"].map(h => (
-                <th key={h} className="text-left px-5 py-4 font-semibold text-xs uppercase tracking-wide" style={{ color: "#6b4a58" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="text-center py-16 text-gray-400 text-sm">
-                  Tidak ada pelanggan yang sesuai.
-                </td>
+          <table className="w-full text-sm min-w-[800px]">
+            <thead>
+              <tr style={{ background: "rgba(255,240,246,0.7)", borderBottom: "1px solid #fce7f3" }}>
+                {["Pelanggan", "Kontak", "Alamat", "Total Pesanan", "Total Belanja", "Loyalitas", "Bergabung"].map(h => (
+                  <th key={h} className="text-left px-5 py-4 font-semibold text-xs uppercase tracking-wide" style={{ color: "#6b4a58" }}>{h}</th>
+                ))}
               </tr>
-            ) : filtered.map((c, i) => {
-              const badge = loyaltisBadge[c.loyalitas];
-              return (
-                <tr
-                  key={c.id}
-                  className={`border-b border-pink-50 hover:bg-pink-50/30 transition-colors cursor-pointer ${i % 2 ? "bg-[#fffafb]" : ""}`}
-                  onClick={() => setSelected(c)}
-                >
-                  {/* Nama + avatar */}
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                        style={{ background: "linear-gradient(135deg,#e91e8c,#c9a227)" }}
-                      >
-                        {c.nama.charAt(0)}
-                      </div>
-                      <span className="font-semibold" style={{ color: "#1a0a10" }}>{c.nama}</span>
-                    </div>
+            </thead>
+            <tbody>
+              {loading ? (
+                [...Array(5)].map((_, i) => <SkeletonRow key={i} />)
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-16 text-gray-400 text-sm">
+                    {customers.length === 0 ? "Belum ada pelanggan terdaftar." : "Tidak ada pelanggan yang sesuai."}
                   </td>
-                  <td className="px-5 py-4" style={{ color: "#6b4a58" }}>
-                    <p>{c.email}</p>
-                    <p className="text-xs" style={{ color: "#a07080" }}>{c.telepon}</p>
-                  </td>
-                  <td className="px-5 py-4 text-xs" style={{ color: "#6b4a58" }}>{c.kota}</td>
-                  <td className="px-5 py-4 text-center font-semibold" style={{ color: "#1a0a10" }}>{c.totalPesanan}</td>
-                  <td className="px-5 py-4 font-semibold text-xs" style={{ color: "#b8860b" }}>{toRp(c.totalBelanja)}</td>
-                  <td className="px-5 py-4">
-                    <span
-                      className="px-3 py-1 rounded-full text-xs font-semibold"
-                      style={{ color: badge.color, background: badge.bg }}
-                    >
-                      {badge.icon} {c.loyalitas}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4 text-xs" style={{ color: "#a07080" }}>{c.bergabung}</td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ) : filtered.map((c, i) => {
+                const badge = loyaltisBadge[c.loyalitas];
+                return (
+                  <tr
+                    key={c.id}
+                    className={`border-b border-pink-50 hover:bg-pink-50/30 transition-colors cursor-pointer ${i % 2 ? "bg-[#fffafb]" : ""}`}
+                    onClick={() => setSelected(c)}
+                  >
+                    
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        {c.avatar_url ? (
+                          <img src={c.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                        ) : (
+                          <div
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                            style={{ background: "linear-gradient(135deg,#e91e8c,#c9a227)" }}
+                          >
+                            {(c.nama || c.email || "?").charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <span className="font-semibold" style={{ color: "#1a0a10" }}>{c.nama || "—"}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4" style={{ color: "#6b4a58" }}>
+                      <p>{c.email}</p>
+                      <p className="text-xs" style={{ color: "#a07080" }}>{c.no_hp || "—"}</p>
+                    </td>
+                    <td className="px-5 py-4 text-xs" style={{ color: "#6b4a58" }}>{c.alamat || "—"}</td>
+                    <td className="px-5 py-4 text-center font-semibold" style={{ color: "#1a0a10" }}>{c.totalPesanan}</td>
+                    <td className="px-5 py-4 font-semibold text-xs" style={{ color: "#b8860b" }}>{toRp(c.totalBelanja)}</td>
+                    <td className="px-5 py-4">
+                      <span
+                        className="px-3 py-1 rounded-full text-xs font-semibold"
+                        style={{ color: badge.color, background: badge.bg }}
+                      >
+                        {badge.icon} {c.loyalitas}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 text-xs" style={{ color: "#a07080" }}>{formatTanggal(c.created_at)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* Detail modal */}
+      
       {selected && (
         <div
           className="kol-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4"
           onClick={() => setSelected(null)}
         >
-          <div className="bg-white rounded-3xl max-w-sm w-full p-8" onClick={e => e.stopPropagation()}>
-            {/* Close */}
+          <div className="bg-white rounded-3xl max-w-sm w-full p-8 relative" onClick={e => e.stopPropagation()}>
+            
             <button
               onClick={() => setSelected(null)}
               className="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-pink-50 flex items-center justify-center"
@@ -173,15 +253,21 @@ export default function DataPelanggan() {
               ✕
             </button>
 
-            {/* Avatar */}
+            
             <div className="flex flex-col items-center mb-6">
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white mb-3"
-                style={{ background: "linear-gradient(135deg,#e91e8c,#c9a227)" }}
-              >
-                {selected.nama.charAt(0)}
-              </div>
-              <p className="font-bold text-xl" style={{ fontFamily: "var(--font-playfair,serif)", color: "#1a0a10" }}>{selected.nama}</p>
+              {selected.avatar_url ? (
+                <img src={selected.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover mb-3" />
+              ) : (
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white mb-3"
+                  style={{ background: "linear-gradient(135deg,#e91e8c,#c9a227)" }}
+                >
+                  {(selected.nama || selected.email || "?").charAt(0).toUpperCase()}
+                </div>
+              )}
+              <p className="font-bold text-xl" style={{ fontFamily: "var(--font-playfair,serif)", color: "#1a0a10" }}>
+                {selected.nama || "—"}
+              </p>
               <span
                 className="mt-1 px-3 py-1 rounded-full text-xs font-semibold"
                 style={{ color: loyaltisBadge[selected.loyalitas].color, background: loyaltisBadge[selected.loyalitas].bg }}
@@ -190,19 +276,19 @@ export default function DataPelanggan() {
               </span>
             </div>
 
-            {/* Info grid */}
+            
             <div className="space-y-3">
               {[
-                { label: "Email",          value: selected.email },
-                { label: "Telepon",        value: selected.telepon },
-                { label: "Kota",           value: selected.kota },
-                { label: "Bergabung",      value: selected.bergabung },
-                { label: "Total Pesanan",  value: `${selected.totalPesanan} pesanan` },
-                { label: "Total Belanja",  value: toRp(selected.totalBelanja) },
+                { label: "Email",         value: selected.email },
+                { label: "Telepon",       value: selected.no_hp || "—" },
+                { label: "Alamat",        value: selected.alamat || "—" },
+                { label: "Bergabung",     value: formatTanggal(selected.created_at) },
+                { label: "Total Pesanan", value: `${selected.totalPesanan} pesanan` },
+                { label: "Total Belanja", value: toRp(selected.totalBelanja) },
               ].map(({ label, value }) => (
                 <div key={label} className="flex justify-between items-center py-2 border-b border-pink-50 last:border-0">
                   <span className="text-xs font-medium" style={{ color: "#a07080" }}>{label}</span>
-                  <span className="text-sm font-semibold" style={{ color: "#1a0a10" }}>{value}</span>
+                  <span className="text-sm font-semibold text-right max-w-[60%]" style={{ color: "#1a0a10" }}>{value}</span>
                 </div>
               ))}
             </div>

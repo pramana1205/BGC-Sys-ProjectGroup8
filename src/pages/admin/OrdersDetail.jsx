@@ -27,7 +27,7 @@ const STATUS_FLOW = [
 export default function OrdersDetail() {
   const [orders, setOrders]         = useState([]);
   const [loading, setLoading]       = useState(true);
-  const [selected, setSelected]     = useState(null);  // order yang dibuka detail-nya
+  const [selected, setSelected]     = useState(null);  
   const [updating, setUpdating]     = useState(false);
 
   const fetchOrders = async () => {
@@ -48,7 +48,7 @@ export default function OrdersDetail() {
 
   useEffect(() => { fetchOrders(); }, []);
 
-  /* ── Update status pesanan ────────────────────────── */
+  
   const updateStatus = async (orderId, newStatus) => {
     setUpdating(true);
     const { error } = await supabase
@@ -77,7 +77,7 @@ export default function OrdersDetail() {
     return idx >= 0 && idx < STATUS_FLOW.length - 1 ? STATUS_FLOW[idx + 1] : null;
   };
 
-  /* ── Stat summary ──────────────────────────────────── */
+  
   const statCards = [
     { label: "Total Pesanan",  value: orders.length,                                      color: "#1a0a10" },
     { label: "Menunggu",       value: orders.filter(o => o.status_pesanan === "menunggu_konfirmasi").length, color: "#b8860b" },
@@ -87,7 +87,7 @@ export default function OrdersDetail() {
 
   return (
     <div id="orders-detail-container" className="p-6">
-      {/* Header */}
+      
       <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
         <div>
           <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-playfair,serif)", color: "#1a0a10" }}>
@@ -100,7 +100,7 @@ export default function OrdersDetail() {
         </button>
       </div>
 
-      {/* Stat Cards */}
+      
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {statCards.map(s => (
           <div key={s.label} className="bg-white rounded-2xl border border-pink-100 px-5 py-4">
@@ -112,7 +112,7 @@ export default function OrdersDetail() {
 
       <div className={`grid gap-5 ${selected ? "grid-cols-1 lg:grid-cols-[1fr_380px]" : "grid-cols-1"}`}>
 
-        {/* ── Tabel Pesanan ──────────────────────── */}
+        
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[700px]">
@@ -172,10 +172,10 @@ export default function OrdersDetail() {
           </div>
         </div>
 
-        {/* ── Detail Panel ─────────────────────────────── */}
+        
         {selected && (
           <div className="space-y-4">
-            {/* Order Meta */}
+            
             <div className="bg-white rounded-xl p-5 shadow-sm">
               <div className="flex justify-between flex-wrap gap-3 mb-4">
                 <div>
@@ -193,7 +193,7 @@ export default function OrdersDetail() {
                 </div>
               </div>
 
-              {/* Informasi pelanggan */}
+              
               <div className="grid grid-cols-2 gap-3 text-sm">
                 {[
                   ["Nama", selected.nama_pemesan],
@@ -214,7 +214,78 @@ export default function OrdersDetail() {
               </div>
             </div>
 
-            {/* Item Pesanan */}
+            {selected.status_pesanan !== "dibatalkan" && (() => {
+              const STEPS = [
+                "Pesanan Diterima",
+                "Konfirmasi Pembayaran",
+                "Proses Produksi",
+                "Quality Check",
+                "Siap Dikirim",
+                "Selesai",
+              ];
+              const STATUS_TO_STEP = {
+                menunggu_konfirmasi: 0,
+                dikonfirmasi:        1,
+                produksi:            2,
+                quality_check:       3,
+                siap_kirim:          4,
+                dikirim:             4,
+                selesai:             5,
+              };
+              const currentStep = STATUS_TO_STEP[selected.status_pesanan] ?? 0;
+              const doneCount   = currentStep + 1;
+              const pct         = Math.round((doneCount / STEPS.length) * 100);
+
+              return (
+                <div className="bg-white rounded-xl p-5 shadow-sm border border-pink-50">
+                  <div className="flex justify-between items-center mb-3">
+                    <p className="font-bold text-sm text-slate-800">⚙️ Progres Produksi</p>
+                    <span className="text-sm font-bold text-pink-500">{pct}%</span>
+                  </div>
+                  
+                  <div className="h-1.5 bg-pink-50 rounded-full mb-5 overflow-hidden">
+                    <div 
+                      className="h-full bg-pink-500 transition-all duration-500" 
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    {STEPS.map((label, idx) => {
+                      const done = idx <= currentStep;
+                      const isActive = idx === currentStep;
+                      return (
+                        <div key={idx} className="flex items-start gap-3">
+                          <div className="flex flex-col items-center mt-0.5">
+                            <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                              done ? "border-pink-500 bg-pink-500" : "border-gray-200 bg-white"
+                            } ${isActive ? "ring-2 ring-pink-200" : ""}`}>
+                              {done && (
+                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4">
+                                  <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                              )}
+                            </div>
+                            {idx < STEPS.length - 1 && (
+                              <div className={`w-0.5 h-4 mt-1 ${done ? "bg-pink-300" : "bg-gray-100"}`} />
+                            )}
+                          </div>
+                          <div>
+                            <p className={`text-xs font-semibold ${done ? "text-slate-800" : "text-gray-400"}`}>
+                              {label}
+                            </p>
+                            {isActive && (
+                              <p className="text-[10px] text-pink-500 font-medium">Sedang berlangsung</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
             <div className="bg-white rounded-xl p-5 shadow-sm">
               <p className="font-bold text-sm mb-4">🧾 Item Pesanan</p>
               <div className="space-y-3">
@@ -240,7 +311,7 @@ export default function OrdersDetail() {
               </div>
             </div>
 
-            {/* Catatan */}
+            
             {selected.catatan_umum && (
               <div className="bg-white rounded-xl p-4 shadow-sm">
                 <p className="font-bold text-sm mb-2">📝 Catatan Pesanan</p>
@@ -250,7 +321,7 @@ export default function OrdersDetail() {
               </div>
             )}
 
-            {/* Aksi */}
+            
             <div className="bg-white rounded-xl p-5 shadow-sm space-y-2">
               <p className="font-bold text-sm mb-3">⚡ Aksi Pesanan</p>
 

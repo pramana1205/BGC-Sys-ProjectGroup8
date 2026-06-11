@@ -171,6 +171,19 @@ export default function ManageProduk() {
     fetchProducts();
   };
 
+  const toggleShowcase = async (id, currentVal) => {
+    const { error } = await supabase
+      .from("products")
+      .update({ is_showcase: !currentVal })
+      .eq("id", id);
+
+    if (error) {
+      alert("Gagal mengupdate showcase. Pastikan kolom 'is_showcase' (boolean, default false) sudah ditambahkan di tabel products pada Supabase!\n\nDetail: " + error.message);
+      return;
+    }
+    fetchProducts();
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
@@ -216,6 +229,7 @@ export default function ManageProduk() {
                   "Ukuran",
                   "Deskripsi",
                   "Status",
+                  "Showcase",
                   "Aksi",
                 ].map((h) => (
                   <th
@@ -316,6 +330,20 @@ export default function ManageProduk() {
                       <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-600">
                         {p.status_produk}
                       </span>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <button
+                        onClick={() => toggleShowcase(p.id, p.is_showcase)}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors"
+                        style={{
+                          borderColor: p.is_showcase ? "#e91e8c" : "#fce7f3",
+                          color: p.is_showcase ? "#e91e8c" : "#a07080",
+                          backgroundColor: p.is_showcase ? "rgba(233,30,140,0.05)" : "transparent",
+                        }}
+                      >
+                        {p.is_showcase ? "★ Ditampilkan" : "Sembunyikan"}
+                      </button>
                     </td>
 
                     <td className="px-5 py-4">

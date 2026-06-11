@@ -15,7 +15,7 @@ export default function AkunAdmin() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-start">
-      {/* ─── Left: form ─── */}
+      
       <div className="flex-1">
       <div className="mb-8">
         <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-playfair,serif)", color: "#1a0a10" }}>Profil Admin</h1>
@@ -23,7 +23,7 @@ export default function AkunAdmin() {
       </div>
 
       <div className="max-w-xl bg-white rounded-3xl border border-pink-100 p-8">
-        {/* Avatar & Role */}
+        
         <div className="flex items-center gap-5 mb-8">
           <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0"
             style={{ background: "linear-gradient(135deg,#e91e8c,#c9a227)" }}>
@@ -56,7 +56,7 @@ export default function AkunAdmin() {
             </div>
           ))}
 
-          {/* Email — selalu read-only */}
+          
           <div>
             <label className="flex items-center gap-1.5 text-sm font-medium mb-1.5" style={{ color: "#6b4a58" }}>
               Email
@@ -77,7 +77,7 @@ export default function AkunAdmin() {
         </div>
       </div>
 
-      {/* ─── Right: decorative panel ─── */}
+      
       <div
         className="hidden lg:flex flex-col items-center justify-center gap-5 rounded-3xl p-8 w-72 shrink-0"
         style={{

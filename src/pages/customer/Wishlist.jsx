@@ -108,8 +108,11 @@ export default function Wishlist() {
         .eq("user_id", userId)
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
-        // Flatten: ambil product data dari join
+      if (error) {
+        console.error("Gagal mengambil wishlist:", error.message);
+        alert("Gagal mengambil wishlist: " + error.message);
+      } else if (data) {
+        
         setWishlist(data.map(w => ({ wishlistId: w.id, ...w.products })));
       }
       setLoading(false);
@@ -120,9 +123,15 @@ export default function Wishlist() {
 
   const removeWishlist = async (productId) => {
     const userId = await getUserId();
-    await supabase.from("wishlist").delete()
+    const { error } = await supabase.from("wishlist").delete()
       .eq("user_id", userId).eq("product_id", productId);
-    setWishlist(prev => prev.filter(item => item.id !== productId));
+    
+    if (error) {
+      console.error("Gagal menghapus wishlist:", error.message);
+      alert("Gagal menghapus wishlist: " + error.message);
+    } else {
+      setWishlist(prev => prev.filter(item => item.id !== productId));
+    }
   };
 
   const handleOrder = (product) => {
@@ -181,15 +190,24 @@ export default function Wishlist() {
                   <div className="kol-card-img relative overflow-hidden">
                     <ProductImage src={item.gambar_url} alt={item.nama_produk} />
 
-                    {/* Hapus Wishlist */}
+                    
                     <button
                       onClick={() => removeWishlist(item.id)}
                       className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/85 backdrop-blur-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110 z-10"
                     >
-                      ❤️
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="#dc143c"
+                        stroke="#dc143c"
+                        strokeWidth="2.5"
+                      >
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
                     </button>
 
-                    {/* Hover */}
+                    
                     <div className="kol-card-overlay absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button onClick={() => setSelected(item)} className="kol-btn-detail px-6 py-2.5 rounded-full text-sm font-semibold text-white shadow-lg">
                         Lihat Detail

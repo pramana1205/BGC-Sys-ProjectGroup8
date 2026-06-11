@@ -10,7 +10,7 @@ export default function OrderPage() {
   const navigate  = useNavigate();
   const location  = useLocation();
 
-  // Produk yang dikirim dari Koleksi / Wishlist
+  
   const incomingProduct = location.state?.product || null;
 
   const [cartItems, setCartItems]     = useState([]);
@@ -20,10 +20,10 @@ export default function OrderPage() {
   const [orderId, setOrderId]         = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /* ── Inisialisasi: bawa produk ke cart & auto-fill form ── */
+  
   useEffect(() => {
     const init = async () => {
-      // 1. Fetch user profile untuk auto-fill form
+      
       const { data: authData } = await supabase.auth.getUser();
       const userId = authData?.user?.id
         || localStorage.getItem("userToken")
@@ -48,7 +48,7 @@ export default function OrderPage() {
         }
       }
 
-      // 2. Set produk ke cart jika ada yang dikirim
+      
       if (incomingProduct) {
         setCartItems([{
           id:       incomingProduct.id,
@@ -82,7 +82,7 @@ export default function OrderPage() {
       prev.map(it => it.id === id ? { ...it, qty: Math.max(1, it.qty + delta) } : it)
     );
 
-  /* ── Submit ke Supabase ─────────────────────────────── */
+  
   const handleSubmit = async () => {
     if (!form.nama || !form.email || !form.telepon || !form.alamat) {
       alert("Mohon lengkapi semua data pemesanan.");
@@ -100,7 +100,7 @@ export default function OrderPage() {
       || localStorage.getItem("userToken")
       || sessionStorage.getItem("userToken");
 
-    // 1. Insert ke tabel orders
+    
     const { data: orderData, error: orderErr } = await supabase
       .from("orders")
       .insert({
@@ -127,7 +127,7 @@ export default function OrderPage() {
 
     const newOrderId = orderData.id;
 
-    // 2. Insert ke tabel order_items
+    
     const itemsPayload = cartItems.map(item => ({
       order_id:        newOrderId,
       product_id:      item.id,
@@ -151,7 +151,7 @@ export default function OrderPage() {
     setSubmitted(true);
   };
 
-  /* ── Success Screen ─────────────────────────────────── */
+  
   if (submitted) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-6 py-20 text-center">
@@ -201,7 +201,7 @@ export default function OrderPage() {
 
       <div className="px-6 sm:px-10 py-8 grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-        {/* ─── Item Pesanan ─────────────────────────── */}
+        
         <div>
           <h2 className="font-bold text-2xl mb-6" style={{ fontFamily: "var(--font-playfair,serif)", color: "#1a0a10" }}>
             Item Pesanan
@@ -227,7 +227,7 @@ export default function OrderPage() {
                     <button onClick={() => removeItem(item.id)} className="text-2xl text-gray-300 hover:text-red-400 transition-colors">×</button>
                   </div>
 
-                  {/* Qty */}
+                  
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-sm font-medium" style={{ color: "#2a1a1f" }}>Jumlah:</span>
                     <button onClick={() => updateQty(item.id, -1)} className="w-8 h-8 rounded-full border border-pink-200 text-pink-500 font-bold hover:bg-pink-50 transition-colors flex items-center justify-center">−</button>
@@ -238,7 +238,7 @@ export default function OrderPage() {
                     </span>
                   </div>
 
-                  {/* Ukuran */}
+                  
                   {item.ukuran?.length > 0 && (
                     <div className="mb-4">
                       <p className="text-sm font-medium mb-2" style={{ color: "#2a1a1f" }}>Ukuran</p>
@@ -256,7 +256,7 @@ export default function OrderPage() {
                     </div>
                   )}
 
-                  {/* Catatan */}
+                  
                   <div>
                     <p className="text-sm font-medium mb-2" style={{ color: "#2a1a1f" }}>Catatan item (opsional)</p>
                     <textarea rows={2} value={item.note} onChange={(e) => updateItem(item.id, "note", e.target.value)}
@@ -269,7 +269,7 @@ export default function OrderPage() {
             </div>
           )}
 
-          {/* Ringkasan */}
+          
           {cartItems.length > 0 && (
             <div className="mt-6 bg-white border border-pink-100 rounded-3xl p-6">
               <h3 className="font-bold text-lg mb-5" style={{ color: "#1a0a10", fontFamily: "var(--font-playfair,serif)" }}>
@@ -297,7 +297,7 @@ export default function OrderPage() {
           )}
         </div>
 
-        {/* ─── Form Informasi ─────────────────────── */}
+        
         <div className="bg-white border border-pink-100 rounded-3xl p-8 h-fit">
           <h2 className="font-bold text-2xl mb-7" style={{ fontFamily: "var(--font-playfair,serif)", color: "#1a0a10" }}>
             Informasi Pemesanan
@@ -326,7 +326,7 @@ export default function OrderPage() {
               />
             </div>
 
-            {/* Metode Pembayaran */}
+            
             <div>
               <label className="block text-sm font-medium mb-3" style={{ color: "#2a1a1f" }}>Metode Pembayaran</label>
               <div className="space-y-3">
@@ -352,7 +352,7 @@ export default function OrderPage() {
               </div>
             </div>
 
-            {/* Estimasi */}
+            
             {cartItems.length > 0 && (
               <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 text-sm">
                 <p className="font-semibold mb-1" style={{ color: "#92600a" }}>⏱ Estimasi Waktu Produksi</p>

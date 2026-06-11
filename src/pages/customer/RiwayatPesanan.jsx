@@ -74,7 +74,7 @@ export default function RiwayatPesanan() {
       </div>
 
       <div className="px-6 sm:px-10 pb-16">
-        {/* Summary cards */}
+        
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {statKeys.map((key) => (
             <div key={key} className="bg-white rounded-2xl border border-pink-100 px-5 py-4">
@@ -86,7 +86,7 @@ export default function RiwayatPesanan() {
           ))}
         </div>
 
-        {/* Table / States */}
+        
         {loading ? (
           <div className="bg-white rounded-3xl border border-pink-100 p-10 animate-pulse space-y-4">
             {[...Array(4)].map((_, i) => <div key={i} className="h-10 bg-pink-50 rounded-xl" />)}
@@ -149,7 +149,7 @@ export default function RiwayatPesanan() {
           </div>
         )}
 
-        {/* Decorative footer */}
+        
         <div className="mt-10 flex flex-col items-center gap-2">
           <BotanicalLine width={280} opacity={0.2} />
           <div className="flex items-center gap-6">
@@ -161,7 +161,7 @@ export default function RiwayatPesanan() {
         </div>
       </div>
 
-      {/* Detail Modal */}
+      
       {selected && (
         <div className="kol-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setSelected(null)}>
           <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl" onClick={e => e.stopPropagation()}>

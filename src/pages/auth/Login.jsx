@@ -38,21 +38,23 @@ export default function Login() {
     setLoading(true);
     setError("");
 
-    // Hardcoded admin/owner bypass
+    
     if (dataForm.email === HARDCODED_ADMIN.email && dataForm.password === HARDCODED_ADMIN.password) {
       setAuth({ token: HARDCODED_ADMIN.token, role: HARDCODED_ADMIN.role }, rememberMe);
+      sessionStorage.setItem("welcomeToast", JSON.stringify({ role: "admin" }));
       setLoading(false);
       navigate("/dashboard");
       return;
     }
     if (dataForm.email === HARDCODED_OWNER.email && dataForm.password === HARDCODED_OWNER.password) {
       setAuth({ token: HARDCODED_OWNER.token, role: HARDCODED_OWNER.role }, rememberMe);
+      sessionStorage.setItem("welcomeToast", JSON.stringify({ role: "owner" }));
       setLoading(false);
       setShowSelector(true);
       return;
     }
 
-    // Supabase auth for customer
+    
     const { data, error: authError } = await supabase.auth.signInWithPassword({
       email: dataForm.email,
       password: dataForm.password,
@@ -74,7 +76,7 @@ export default function Login() {
     }
 
     const user = data.user;
-    // Save user ID as token
+    
     setAuth({ token: user.id, role: "customer" }, rememberMe);
     setLoading(false);
     navigate("/");

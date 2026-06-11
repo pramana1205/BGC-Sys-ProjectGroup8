@@ -48,7 +48,7 @@ export default function Feedback() {
       </div>
 
       <div className="px-6 sm:px-10 pb-16">
-        {/* Tab */}
+        
         <div className="flex gap-2 mb-6">
           {[["lihat", "📋 Lihat Ulasan"], ["beri", "✍️ Beri Ulasan"]].map(([key, label]) => (
             <button key={key} onClick={() => setTab(key)}
@@ -58,7 +58,7 @@ export default function Feedback() {
           ))}
         </div>
 
-        {/* TAB LIHAT */}
+        
         {tab === "lihat" && (
           <div className="text-center py-20">
             <div className="text-5xl mb-4">💬</div>
@@ -74,7 +74,7 @@ export default function Feedback() {
           </div>
         )}
 
-        {/* TAB BERI */}
+        
         {tab === "beri" && (
           <div className="bg-white rounded-3xl border border-pink-100 p-8 max-w-xl">
             {submitted ? (

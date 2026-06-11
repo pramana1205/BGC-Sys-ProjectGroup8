@@ -1,63 +1,9 @@
+import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { FloralOrn, CornerOrn, GoldDivider, BrandStamp, DiamondPattern, Sparkles, HexGrid } from "../../component/Decorations";
 
-const collections = {
-  blus: [
-    {
-      name: "Blus Aurora",
-      image:
-        "https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/93/MTA-183304800/brd-132969_simbuu-official-sb039-aurora-blouse-kekinian-oversize-modern-stylish-elegan_full01-a49be697.webp",
-    },
-    {
-      name: "Blus Rosé",
-      image:
-        "https://img.lazcdn.com/g/p/d3799031baa2e8a2d32b2486f28438fe.jpg_720x720q80.jpg",
-    },
-    {
-      name: "Blus Elegance",
-      image:
-        "https://img.lazcdn.com/g/p/be182e0b116f13ca37d15d262bdee41c.jpg_720x720q80.jpg",
-    },
-  ],
 
-  gaun: [
-    {
-      name: "Gaun Cherish",
-      image:
-        "https://down-id.img.susercontent.com/file/sg-11134201-22100-7rmlk9kr4wiv8e",
-    },
-    {
-      name: "Gaun Midnight",
-      image:
-        "https://alcavella.com/cdn/shop/files/ZAHARA_11.jpg?v=1771400650&width=1200",
-    },
-    {
-      name: "Gaun Seroja",
-      image:
-        "https://img.lazcdn.com/g/ff/kf/S3d32ebf8149943a3bf6f3467ffbddabdn.jpg_720x720q80.jpg",
-    },
-  ],
-
-  bajuKurung: [
-    {
-      name: "Baju Kurung Klasik",
-      image:
-        "https://www.asikinahmad.com/scripts/timthumb.php?src=https://www.asikinahmad.com//site_media/img/NUANSAklasik_LB_1_20251230170214.jpg&w=700&zc=1",
-    },
-    {
-      name: "Baju Kurung Modern",
-      image:
-        "https://cdn0-production-images-kly.akamaized.net/7SBFIiCo23WI2QrzH1XtqUcpAa4=/500x667/smart/filters:quality(75):strip_icc()/kly-media-production/medias/4768314/original/097032700_1710073401-Kurung_Modern_Wear___Scarves___Baju_Kurung___Brides_Series___Casual___Baju_Melayu___Kurta___DIANA_KURUNG_IN_BABY_PINK.jpg",
-    },
-    {
-      name: "Baju Kurung Anggun",
-      image:
-        "https://www.angguncollection.com/img-cache?src=mdn-1178_20240508131423.jpg&w=580",
-    },
-  ],
-};
-
-/* ── Card Image ── */
 const CardImage = ({ image, name }) => (
   <div className="relative w-full aspect-[3/4] overflow-hidden">
     <img
@@ -66,7 +12,7 @@ const CardImage = ({ image, name }) => (
       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
     />
 
-    {/* overlay gradient */}
+    
     <div
       className="absolute inset-0"
       style={{
@@ -77,7 +23,7 @@ const CardImage = ({ image, name }) => (
   </div>
 );
 
-/* ── Reusable Card ── */
+
 const CollectionCard = ({ name, image }) => (
   <div
     className="group rounded-[20px] overflow-hidden backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:scale-[1.02]"
@@ -101,7 +47,7 @@ const CollectionCard = ({ name, image }) => (
   </div>
 );
 
-/* ── Section Header ── */
+
 const SectionHeader = ({ eyebrow, title, desc }) => (
   <>
     <p
@@ -131,6 +77,40 @@ const SectionHeader = ({ eyebrow, title, desc }) => (
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [showcaseData, setShowcaseData] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchShowcase = async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          id,
+          nama_produk,
+          gambar_url,
+          categories (nama_kategori)
+        `)
+        .eq('is_showcase', true);
+
+      if (data) {
+        
+        const grouped = data.reduce((acc, curr) => {
+          const cat = curr.categories?.nama_kategori || 'Lainnya';
+          if (!acc[cat]) acc[cat] = [];
+          acc[cat].push({ 
+            id: curr.id,
+            name: curr.nama_produk, 
+            image: curr.gambar_url || 'https://via.placeholder.com/400x500?text=No+Image' 
+          });
+          return acc;
+        }, {});
+        setShowcaseData(grouped);
+      }
+      setLoading(false);
+    };
+    fetchShowcase();
+  }, []);
+
   const handleKoleksi = () => navigate("/koleksi");
 
   return (
@@ -143,7 +123,7 @@ export default function LandingPage() {
         color: "#2a1a1f",
       }}
     >
-      {/* ══ HERO ══ */}
+      
       <section className="hero-overlay relative min-h-screen flex flex-col items-center justify-center text-center px-5 py-20 overflow-hidden border-b-4 border-gray-200">
         <div
           className="orb1 absolute rounded-full blur-[60px] pointer-events-none animate-float-orb"
@@ -185,9 +165,9 @@ export default function LandingPage() {
         </button>
       </section>
 
-      {/* ══ ABOUT ══ */}
+      
       <section className="max-w-[1100px] mx-auto px-5 py-18 relative">
-        {/* Corner ornaments */}
+        
         <CornerOrn className="absolute top-2 left-2" opacity={0.15} size={70} />
         <CornerOrn className="absolute top-2 right-2" opacity={0.15} size={70} style={{ transform: "scaleX(-1)" }} />
 
@@ -207,7 +187,7 @@ export default function LandingPage() {
 
         <div className="gold-divider" />
 
-        {/* Decorative flanked paragraph */}
+        
         <div className="flex items-center gap-4 justify-center">
           <FloralOrn size={56} opacity={0.22} color="#b8860b" className="shrink-0 hidden sm:block" />
           <p
@@ -220,73 +200,58 @@ export default function LandingPage() {
           <FloralOrn size={56} opacity={0.22} color="#e91e8c" className="shrink-0 hidden sm:block" />
         </div>
 
-        {/* Mini brand stamp below */}
+        
         <div className="flex flex-col items-center mt-6 gap-2">
           <GoldDivider opacity={0.2} className="w-48" />
           <BrandStamp opacity={0.2} />
         </div>
       </section>
 
-      {/* ══ KOLEKSI BLUS ══ */}
-      <div className="bg-section-alt w-full py-18 px-5">
-        <div className="max-w-[1100px] mx-auto">
-          <SectionHeader
-            title="Koleksi Blus"
-            desc="Blus elegan untuk tampilan kasual dan formal"
-          />
-
-          <div className="grid grid-cols-3 gap-6 max-sm:grid-cols-2 max-sm:gap-3.5">
-            {collections.blus.map((item) => (
-              <CollectionCard
-                key={item.name}
-                name={item.name}
-                image={item.image}
+      
+      {loading ? (
+        <div className="text-center py-20 text-gray-400">Memuat koleksi showcase...</div>
+      ) : Object.keys(showcaseData).length === 0 ? (
+        <div className="text-center py-20 text-gray-400 italic">Belum ada produk yang dishowcase.</div>
+      ) : (
+        Object.entries(showcaseData).map(([category, items], index) => {
+          const isAlt = index % 2 === 0;
+          const content = (
+            <div className="max-w-[1100px] mx-auto">
+              <SectionHeader
+                title={`Koleksi ${category}`}
+                desc={`Pilihan terbaik dari koleksi ${category} kami`}
               />
-            ))}
-          </div>
-        </div>
-      </div>
 
-      {/* ══ KOLEKSI GAUN ══ */}
-      <section className="max-w-[1100px] mx-auto px-5 py-18">
-        <SectionHeader
-          title="Koleksi Gaun"
-          desc="Gaun memukau untuk acara spesial Anda"
-        />
+              <div className="grid grid-cols-3 gap-6 max-sm:grid-cols-2 max-sm:gap-3.5">
+                {items.map((item) => (
+                  <CollectionCard
+                    key={item.id}
+                    name={item.name}
+                    image={item.image}
+                  />
+                ))}
+              </div>
+            </div>
+          );
 
-        <div className="grid grid-cols-3 gap-6 max-sm:grid-cols-2 max-sm:gap-3.5">
-          {collections.gaun.map((item) => (
-            <CollectionCard
-              key={item.name}
-              name={item.name}
-              image={item.image}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* ══ KOLEKSI BAJU KURUNG ══ */}
-      <div className="bg-section-alt w-full py-18 px-5">
-        <div className="max-w-[1100px] mx-auto">
-          <SectionHeader
-            title="Koleksi Baju Kurung"
-            desc="Baju Kurung modern dengan sentuhan tradisional"
-          />
-
-          <div className="grid grid-cols-3 gap-6 max-sm:grid-cols-2 max-sm:gap-3.5">
-            {collections.bajuKurung.map((item) => (
-              <CollectionCard
-                key={item.name}
-                name={item.name}
-                image={item.image}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-      {/* ══ CTA ══ */}
+          if (isAlt) {
+            return (
+              <div key={category} className="bg-section-alt w-full py-18 px-5">
+                {content}
+              </div>
+            );
+          } else {
+            return (
+              <section key={category} className="max-w-[1100px] mx-auto px-5 py-18">
+                {content}
+              </section>
+            );
+          }
+        })
+      )}
+      
       <section className="relative overflow-hidden text-center px-5 py-20">
-        {/* Background decorations */}
+        
         <DiamondPattern className="absolute top-4 left-8" opacity={0.1} />
         <DiamondPattern className="absolute top-4 right-8" opacity={0.1} />
         <Sparkles className="absolute bottom-6 left-1/2 -translate-x-1/2" opacity={0.15} />
@@ -322,7 +287,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ FOOTER ══ */}
+      
       <footer
         className="py-6 px-5 text-center"
         style={{

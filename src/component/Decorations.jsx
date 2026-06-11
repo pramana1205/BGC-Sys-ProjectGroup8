@@ -1,15 +1,6 @@
-/**
- * Decorations.jsx
- * ─────────────────────────────────────────────
- * Reusable decorative elements for BlackGold Cherish.
- * All ornaments use the brand palette:
- *   gold  → #b8860b / #c9a227 / #e8c862
- *   rose  → #e91e8c / #dc143c / #fce7f3
- *   dark  → #1a0a10 / #2d1420
- * All are purely visual (aria-hidden) and pointer-events-none.
- */
 
-/* ─── Floating diamond pattern ─── */
+
+
 export function DiamondPattern({ className = "", opacity = 0.18, color = "#b8860b" }) {
   return (
     <svg
@@ -31,7 +22,7 @@ export function DiamondPattern({ className = "", opacity = 0.18, color = "#b8860
   );
 }
 
-/* ─── Floral / lotus ornament ─── */
+
 export function FloralOrn({ className = "", opacity = 0.22, color = "#b8860b", size = 100 }) {
   return (
     <svg
@@ -43,7 +34,7 @@ export function FloralOrn({ className = "", opacity = 0.22, color = "#b8860b", s
       fill="none"
     >
       <g opacity={opacity}>
-        {/* Petals */}
+        
         {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
           <ellipse
             key={i}
@@ -63,7 +54,7 @@ export function FloralOrn({ className = "", opacity = 0.22, color = "#b8860b", s
   );
 }
 
-/* ─── Corner ornament (decorative bracket) ─── */
+
 export function CornerOrn({ className = "", color = "#b8860b", opacity = 0.25, size = 80 }) {
   return (
     <svg
@@ -80,7 +71,7 @@ export function CornerOrn({ className = "", color = "#b8860b", opacity = 0.25, s
         <circle cx="8" cy="8" r="3" fill={color} />
         <circle cx="72" cy="8" r="2" fill={color} opacity="0.5" />
         <circle cx="8" cy="72" r="2" fill={color} opacity="0.5" />
-        {/* small dots */}
+        
         <circle cx="30" cy="8" r="1.5" fill={color} />
         <circle cx="50" cy="8" r="1.5" fill={color} />
         <circle cx="8" cy="30" r="1.5" fill={color} />
@@ -90,7 +81,7 @@ export function CornerOrn({ className = "", color = "#b8860b", opacity = 0.25, s
   );
 }
 
-/* ─── Horizontal divider line with diamond center ─── */
+
 export function GoldDivider({ className = "", opacity = 0.35 }) {
   return (
     <div
@@ -118,7 +109,7 @@ export function GoldDivider({ className = "", opacity = 0.35 }) {
   );
 }
 
-/* ─── Scattered sparkle dots ─── */
+
 export function Sparkles({ className = "", color = "#b8860b", opacity = 0.2 }) {
   const dots = [
     { cx: 12, cy: 12, r: 2.5 },
@@ -152,7 +143,7 @@ export function Sparkles({ className = "", color = "#b8860b", opacity = 0.2 }) {
   );
 }
 
-/* ─── Wavy botanical line ─── */
+
 export function BotanicalLine({ className = "", color = "#b8860b", opacity = 0.2, width = 200 }) {
   return (
     <svg
@@ -179,7 +170,7 @@ export function BotanicalLine({ className = "", color = "#b8860b", opacity = 0.2
   );
 }
 
-/* ─── Brand quote/tagline stamp ─── */
+
 export function BrandStamp({ className = "", opacity = 0.12 }) {
   return (
     <div
@@ -214,7 +205,7 @@ export function BrandStamp({ className = "", opacity = 0.12 }) {
   );
 }
 
-/* ─── Hexagonal honeycomb mini-grid ─── */
+
 export function HexGrid({ className = "", color = "#b8860b", opacity = 0.12, size = 120 }) {
   return (
     <svg
@@ -226,14 +217,14 @@ export function HexGrid({ className = "", color = "#b8860b", opacity = 0.12, siz
       fill="none"
     >
       <g opacity={opacity} stroke={color} strokeWidth="1">
-        {/* Row 1 */}
+        
         <polygon points="30,10 50,10 60,28 50,46 30,46 20,28" />
         <polygon points="70,10 90,10 100,28 90,46 70,46 60,28" />
-        {/* Row 2 */}
+        
         <polygon points="10,46 30,46 40,64 30,82 10,82 0,64" />
         <polygon points="50,46 70,46 80,64 70,82 50,82 40,64" />
         <polygon points="90,46 110,46 120,64 110,82 90,82 80,64" />
-        {/* Row 3 */}
+        
         <polygon points="30,82 50,82 60,100 50,118 30,118 20,100" />
         <polygon points="70,82 90,82 100,100 90,118 70,118 60,100" />
       </g>
@@ -241,7 +232,7 @@ export function HexGrid({ className = "", color = "#b8860b", opacity = 0.12, siz
   );
 }
 
-/* ─── Full-width background pattern band ─── */
+
 export function PatternBand({ className = "" }) {
   return (
     <div

@@ -64,17 +64,18 @@ export default function MainLayout() {
     <div className="min-h-screen bg-[#fffafb] flex flex-col overflow-x-hidden">
       {!isLanding && (
         <>
-          {/* ── Desktop Top Navbar (hidden on mobile) ── */}
+          
           <nav
             className="kol-navbar sticky top-0 z-40 bg-white hidden sm:flex items-center justify-between px-10 py-4"
             style={{ borderBottom: "1px solid rgba(184,134,11,0.12)" }}
           >
             <button
               onClick={() => navigate("/")}
-              className="text-gradient-brand font-bold text-xl tracking-tight shrink-0"
+              className="flex items-center gap-2.5 text-gradient-brand font-bold text-xl tracking-tight shrink-0"
               style={{ fontFamily: "var(--font-cinzel, serif)" }}
             >
-              BlackGold Cherish
+              <img src="/Logo BGC.jpg" alt="Logo" className="w-9 h-9 object-contain rounded-lg border border-pink-100" />
+              <span>BlackGold Cherish</span>
             </button>
 
             <div className="flex items-center gap-1">
@@ -120,23 +121,24 @@ export default function MainLayout() {
             </div>
           </nav>
 
-          {/* ── Mobile Top Bar — brand name only (visible on mobile) ── */}
+          
           <div
             className="sm:hidden sticky top-0 z-40 bg-white flex items-center justify-center px-4 py-3"
             style={{ borderBottom: "1px solid rgba(184,134,11,0.15)" }}
           >
             <button
               onClick={() => navigate("/")}
-              className="text-gradient-brand font-bold text-lg tracking-tight"
+              className="flex items-center gap-2 text-gradient-brand font-bold text-lg tracking-tight"
               style={{ fontFamily: "var(--font-cinzel, serif)" }}
             >
-              BlackGold Cherish
+              <img src="/Logo BGC.jpg" alt="Logo" className="w-8 h-8 object-contain rounded-lg border border-pink-100" />
+              <span>BlackGold Cherish</span>
             </button>
           </div>
         </>
       )}
 
-      {/* ── Page Content ── */}
+      
       <div className={`flex-1 ${!isLanding ? "pb-20 sm:pb-0" : ""}`}>
         <Outlet />
       </div>
@@ -147,7 +149,7 @@ export default function MainLayout() {
         </div>
       )}
 
-      {/* ── Mobile Bottom Navigation Bar (hidden on desktop) ── */}
+      
       {!isLanding && (
         <nav
           className="sm:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-2 py-2"
@@ -187,7 +189,7 @@ export default function MainLayout() {
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {/* Shorten long labels for mobile */}
+                  
                   {title === "Riwayat Pesanan" ? "Riwayat" : title === "Akun Saya" ? "Akun" : title}
                 </span>
                 {isActive && (

@@ -16,7 +16,7 @@ export default function AdminLayouts() {
       navigate("/login");
       return;
     }
-    // Owner is superadmin — allow access to admin panel too
+    
     if (role !== "admin" && role !== "owner") {
       navigate("/");
     }
@@ -24,16 +24,16 @@ export default function AdminLayouts() {
 
   return (
     <div className="bg-gray-50 min-h-screen flex">
-      {/* Sidebar — hidden on mobile, visible on md+ */}
+      
       <div className="hidden md:block">
         <Sidebar role="admin" />
       </div>
 
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Sticky Header */}
+        
         <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 sm:px-8 py-4 flex items-center justify-between shadow-sm shrink-0">
           <div className="flex items-center gap-3">
-            {/* Hamburger — mobile only */}
+            
             <MobileNav role="admin" />
             <div>
               <h1 className="text-base sm:text-lg font-semibold text-gray-800">Dashboard Admin</h1>
@@ -41,7 +41,7 @@ export default function AdminLayouts() {
             </div>
           </div>
 
-          {/* Logout button in header */}
+          
           <button
             onClick={() => { clearAuth(); navigate("/login"); }}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 border border-red-100 hover:border-red-200 transition-all duration-200"
@@ -51,7 +51,7 @@ export default function AdminLayouts() {
           </button>
         </header>
 
-        {/* Scrollable Content */}
+        
         <main className="flex-1 p-8 overflow-y-auto">
           <Outlet />
         </main>

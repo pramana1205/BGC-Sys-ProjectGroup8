@@ -1,9 +1,4 @@
-/**
- * PanelSelector.jsx
- * ─────────────────────────────────────────────
- * Shown after successful login when role === "owner".
- * Owner is a superadmin who can access all three panels.
- */
+
 import { useNavigate } from "react-router-dom";
 
 const panels = [
@@ -57,7 +52,7 @@ export default function PanelSelector({ onClose }) {
   };
 
   return (
-    /* Backdrop */
+    
     <div
       className="fixed inset-0 z-[999] flex items-center justify-center p-4"
       style={{ background: "rgba(10,5,15,0.75)", backdropFilter: "blur(6px)" }}
@@ -70,7 +65,7 @@ export default function PanelSelector({ onClose }) {
           boxShadow: "0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(184,134,11,0.1)",
         }}
       >
-        {/* Header */}
+        
         <div className="px-8 pt-8 pb-6 text-center border-b" style={{ borderColor: "rgba(184,134,11,0.15)" }}>
           <div className="text-4xl mb-3">👑</div>
           <h2
@@ -90,7 +85,7 @@ export default function PanelSelector({ onClose }) {
           </p>
         </div>
 
-        {/* Panel Cards */}
+        
         <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {panels.map((panel) => (
             <button
@@ -103,13 +98,13 @@ export default function PanelSelector({ onClose }) {
                 boxShadow: `0 4px 20px ${panel.glow}`,
               }}
             >
-              {/* Hover glow overlay */}
+              
               <div
                 className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                 style={{ background: `radial-gradient(circle at center, ${panel.glow} 0%, transparent 70%)` }}
               />
 
-              {/* Icon */}
+              
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shrink-0 relative z-10"
                 style={{ background: panel.gradient, boxShadow: `0 8px 24px ${panel.glow}` }}
@@ -117,7 +112,7 @@ export default function PanelSelector({ onClose }) {
                 {panel.icon}
               </div>
 
-              {/* Badge */}
+              
               <span
                 className="text-[10px] font-bold px-2.5 py-1 rounded-full relative z-10"
                 style={{ color: panel.badgeColor, background: panel.badgeBg, border: `1px solid ${panel.border}` }}
@@ -125,7 +120,7 @@ export default function PanelSelector({ onClose }) {
                 {panel.badge}
               </span>
 
-              {/* Text */}
+              
               <div className="relative z-10">
                 <p className="font-bold text-sm mb-1" style={{ color: "rgba(255,255,255,0.9)" }}>
                   {panel.title}
@@ -135,7 +130,7 @@ export default function PanelSelector({ onClose }) {
                 </p>
               </div>
 
-              {/* Arrow */}
+              
               <div
                 className="mt-1 text-xs font-medium opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-1 group-hover:translate-y-0 relative z-10"
                 style={{ color: panel.badgeColor }}
@@ -146,7 +141,7 @@ export default function PanelSelector({ onClose }) {
           ))}
         </div>
 
-        {/* Footer */}
+        
         <div className="px-8 pb-6 text-center space-y-3">
           <button
             onClick={onClose}

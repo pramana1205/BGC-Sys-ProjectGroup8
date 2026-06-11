@@ -1,25 +1,6 @@
-@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap");
-
-@font-face {
-  font-family: "Barlow";
-  src: url("/fonts/Barlow-Regular.ttf");
-}
-
-@font-face {
-  font-family: "Poppins";
-  src: url("/fonts/Poppins-Regular.ttf");
-}
-
-@font-face {
-  font-family: "Poppins";
-  src: url("/fonts/Poppins-ExtraBold.ttf");
-}
-
+@import "tailwindcss";
 @theme {
-  --font-barlow: "Barlow", sans-serif;
-  --font-poppins: "Poppins", sans-serif;
-  --font-poppins-extrabold: "Poppins", sans-serif;
   --font-cinzel: "Cinzel", serif;
   --font-playfair: "Playfair Display", serif;
   --font-cormorant: "Cormorant Garamond", serif;
@@ -32,9 +13,7 @@
   --color-blush: #fff0f5;
 }
 
-/* ─────────────────────────────────────
-   ANIMATIONS
-───────────────────────────────────── */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -45,7 +24,7 @@
   to   { transform: translateY(-30px) scale(1.08); }
 }
 
-/* Animasi gold shimmer untuk nama brand — sweep kiri ke kanan terus-menerus */
+
 @keyframes goldSweep {
   0%   { background-position: 200% center; }
   100% { background-position: -200% center; }
@@ -59,18 +38,12 @@
   animation: floatOrb 8s ease-in-out infinite alternate;
 }
 
-/* ─────────────────────────────────────
-   HERO ORB SIZES
-───────────────────────────────────── */
+
 .orb1 { width:380px; height:380px; top:-80px; left:-100px; animation-delay:0s; }
 .orb2 { width:280px; height:280px; top:40%; right:-60px; animation-delay:2s; }
 .orb3 { width:220px; height:220px; bottom:10%; left:20%; animation-delay:4s; }
 
-/* ─────────────────────────────────────
-   BRAND NAME GRADIENT
-   Gold antik sesuai foto logo, dengan
-   animasi shimmer sweep kiri→kanan
-───────────────────────────────────── */
+
 .text-gradient-brand {
   background: linear-gradient(
     90deg,
@@ -92,7 +65,7 @@
   animation: goldSweep 7s linear infinite;
 }
 
-/* Section headings: tetap cherry-gold */
+
 .text-gradient-section {
   background: linear-gradient(
     135deg,
@@ -107,7 +80,7 @@
   background-clip: text;
 }
 
-/* Footer brand name: gold */
+
 .text-gradient-footer {
   background: linear-gradient(135deg, #c9a227, #f0d080, #e2b94b);
   -webkit-background-clip: text;
@@ -115,9 +88,7 @@
   background-clip: text;
 }
 
-/* ─────────────────────────────────────
-   HERO PSEUDO-ELEMENT OVERLAY
-───────────────────────────────────── */
+
 .hero-overlay::before {
   content: "";
   position: absolute;
@@ -129,9 +100,7 @@
   pointer-events: none;
 }
 
-/* ─────────────────────────────────────
-   CARD IMAGE SHIMMER
-───────────────────────────────────── */
+
 .card-img-overlay::after {
   content: "";
   position: absolute;
@@ -139,9 +108,7 @@
   background: linear-gradient(135deg, transparent 60%, rgba(184,134,11,0.08) 100%);
 }
 
-/* ─────────────────────────────────────
-   BUTTON PRIMARY (cherry gradient)
-───────────────────────────────────── */
+
 .btn-gold-cherry {
   background: linear-gradient(135deg, #e91e8c 100%);
   box-shadow:
@@ -158,9 +125,7 @@
     inset 0 1px 0 rgba(255,255,255,0.25);
 }
 
-/* ─────────────────────────────────────
-   BUTTON SECONDARY (outlined cherry)
-───────────────────────────────────── */
+
 .btn-outline-cherry {
   border: 2px solid transparent;
   background:
@@ -175,9 +140,7 @@
     linear-gradient(135deg, #e91e8c) border-box;
 }
 
-/* ─────────────────────────────────────
-   SECTION ALT BACKGROUND
-───────────────────────────────────── */
+
 .bg-section-alt {
   background: linear-gradient(
     135deg,
@@ -187,9 +150,7 @@
   );
 }
 
-/* ─────────────────────────────────────
-   GOLD DIVIDER
-───────────────────────────────────── */
+
 .gold-divider {
   width: 80px;
   height: 2px;
@@ -198,9 +159,7 @@
   border-radius: 2px;
 }
 
-/* ─────────────────────────────────────
-   FOOTER
-───────────────────────────────────── */
+
 .footer-border-gold {
   border-bottom: 1px solid rgba(255,215,0,0.12);
 }
@@ -213,9 +172,7 @@
   color: #ffd700;
 }
 
-/* ═══════════════════════════════════════════
-   PAGE KOLEKSI  (kol-*)
-═══════════════════════════════════════════ */
+
 .kol-navbar { box-shadow: 0 1px 0 #f0e8ed; }
 
 .kol-badge { background: #e91e8c; font-size: 9px; }
@@ -249,7 +206,7 @@
 @media (min-width: 1024px) { .kol-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 1280px) { .kol-grid { grid-template-columns: repeat(4, 1fr); } }
 
-/* Wishlist grid — 3 kolom desktop, 2 tablet, 1 mobile */
+
 .wish-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 @media (max-width: 1024px) { .wish-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px)  { .wish-grid { grid-template-columns: repeat(1, 1fr); gap: 16px; } }
@@ -264,7 +221,7 @@
   background: #f0e8ed;
 }
 
-/* Wishlist card image — aspect sama tapi dibatasi max-height */
+
 .wish-card-img {
   width: 100%;
   aspect-ratio: 3 / 4;
@@ -343,11 +300,9 @@
 }
 .kol-btn-pesan:hover { background: #c8176f; transform: translateY(-1px); }
 
-/* ═══════════════════════════════════════════
-   AUTH LAYOUT
-═══════════════════════════════════════════ */
 
-/* Wrapper halaman full-screen */
+
+
 .auth-page {
   position: relative;
   min-height: 100vh;
@@ -364,7 +319,7 @@
   );
 }
 
-/* Inner container */
+
 .auth-container {
   position: relative;
   z-index: 10;
@@ -373,14 +328,14 @@
   padding: 1.5rem 1rem;
 }
 
-/* Header brand area */
+
 .auth-header {
   text-align: center;
   margin-bottom: 2rem;
   animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Brand title */
+
 .auth-brand {
   font-size: clamp(2rem, 6vw, 3rem);
   font-weight: 700;
@@ -389,7 +344,7 @@
   font-family: var(--font-cinzel, serif);
 }
 
-/* Divider garis di bawah brand */
+
 .auth-divider {
   width: 8rem;
   height: 3px;
@@ -405,7 +360,7 @@
   border-radius: 9999px;
 }
 
-/* Tagline di bawah brand */
+
 .auth-tagline {
   color: #be185d;
   font-size: 0.875rem;
@@ -415,7 +370,7 @@
   margin-top: 1rem;
 }
 
-/* Card putih berisi form */
+
 .auth-card {
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(12px);
@@ -429,7 +384,7 @@
   animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Footer copyright */
+
 .auth-footer {
   text-align: center;
   font-size: 0.75rem;
@@ -438,7 +393,7 @@
   font-family: var(--font-cormorant, serif);
 }
 
-/* Orb warna cherry/pink untuk auth */
+
 .auth-orb1 {
   width: 380px;
   height: 380px;
@@ -464,7 +419,7 @@
   animation-delay: 4s;
 }
 
-/* login-card-header — gold accent line */
+
 .login-card-header { position: relative; }
 .login-card-header::after {
   content: "";
@@ -477,11 +432,9 @@
   border-radius: 2px;
 }
 
-/* ═══════════════════════════════════════════
-   AUTH DECORATIVE ORNAMENTS
-═══════════════════════════════════════════ */
 
-/* ── Dot grid texture ── */
+
+
 .auth-dotgrid {
   position: absolute;
   inset: 0;
@@ -491,7 +444,7 @@
   z-index: 0;
 }
 
-/* ── 4th orb (gold tone) ── */
+
 .auth-orb4 {
   width: 200px;
   height: 200px;
@@ -501,7 +454,7 @@
   animation-delay: 6s;
 }
 
-/* ── Corner flourish SVGs ── */
+
 .auth-corner {
   position: absolute;
   width: 140px;
@@ -514,7 +467,7 @@
 .auth-corner--br { bottom: 0; right: 0; transform: scale(-1); }
 .auth-corner--bl { bottom: 0; left: 0;  transform: scaleY(-1); }
 
-/* ── Floating diamond shapes ── */
+
 @keyframes floatDiamond {
   0%   { transform: rotate(45deg) translateY(0)   scale(1);    opacity: 0.55; }
   50%  { transform: rotate(45deg) translateY(-18px) scale(1.1); opacity: 0.8; }
@@ -569,7 +522,7 @@
   animation-delay: 2s;
 }
 
-/* ── Sparkle characters ── */
+
 @keyframes sparklePulse {
   0%, 100% { opacity: 0.15; transform: scale(0.9) rotate(0deg); }
   50%       { opacity: 0.75; transform: scale(1.25) rotate(20deg); }
@@ -589,7 +542,7 @@
 .auth-sparkle--5 { bottom: 12%; right: 14%; color: #e91e8c; animation-duration: 2.5s; animation-delay: 2s; }
 .auth-sparkle--6 { top: 55%;  right: 5%;  color: #c9a227; animation-duration: 3.9s; animation-delay: 0.8s; font-size: 1.2rem; }
 
-/* ── Side arc lines ── */
+
 .auth-arc {
   position: absolute;
   top: 50%;

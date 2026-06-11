@@ -8,27 +8,27 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const handleCallback = async () => {
-      // ── Baca hash dari URL (Supabase taruh token di sini) ──
+      
       const hash = window.location.hash;
       const params = new URLSearchParams(hash.replace("#", "?"));
       const type = params.get("type");
 
-      // ── Biarkan Supabase proses session dari hash URL ──
+      
       const { data: sessionData } = await supabase.auth.getSession();
 
-      // ── Jika ini alur RESET PASSWORD → langsung ke /reset-password ──
+      
       if (type === "recovery") {
         navigate("/reset-password", { replace: true });
         return;
       }
 
-      // ── Jika ini alur EMAIL VERIFICATION → arahkan ke login ──
+      
       if (type === "signup") {
         navigate("/login", { replace: true });
         return;
       }
 
-      // ── Jika ini alur GOOGLE LOGIN ──
+      
       const { data, error } = await supabase.auth.getUser();
 
       if (error || !data.user) {

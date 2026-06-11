@@ -15,7 +15,7 @@ export default function AkunOwner() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-start">
-      {/* ─── Left: form ─── */}
+      
       <div className="flex-1">
       <div className="mb-8">
         <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-playfair,serif)", color: "#1a0a10" }}>Profil Owner</h1>
@@ -57,7 +57,7 @@ export default function AkunOwner() {
             </div>
           ))}
 
-          {/* Email — selalu read-only */}
+          
           <div>
             <label className="flex items-center gap-1.5 text-sm font-medium mb-1.5" style={{ color: "#6b4a58" }}>
               Email
@@ -78,7 +78,7 @@ export default function AkunOwner() {
         </div>
       </div>
 
-      {/* ─── Right: decorative panel ─── */}
+      
       <div
         className="hidden lg:flex flex-col items-center justify-center gap-5 rounded-3xl p-8 w-72 shrink-0"
         style={{

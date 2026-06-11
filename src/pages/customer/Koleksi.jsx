@@ -4,9 +4,7 @@ import { supabase } from "../../lib/supabase";
 
 const toRp = (n) => "Rp " + Number(n).toLocaleString("id-ID");
 
-/* ══════════════════════════════════════
-   IMAGE PLACEHOLDER
-══════════════════════════════════════ */
+
 const ProductImage = ({ src, alt, className = "" }) => {
   if (src) {
     return (
@@ -40,9 +38,7 @@ const ProductImage = ({ src, alt, className = "" }) => {
   );
 };
 
-/* ══════════════════════════════════════
-   MODAL DETAIL PRODUK
-══════════════════════════════════════ */
+
 const ProductModal = ({
   product,
   onClose,
@@ -62,7 +58,7 @@ const ProductModal = ({
         className="kol-modal-card bg-white rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto flex flex-col sm:flex-row relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Tombol Tutup */}
+        
         <button
           onClick={onClose}
           className="absolute top-3.5 right-3.5 z-20 w-8 h-8 rounded-full flex items-center justify-center hover:bg-pink-50 transition-colors"
@@ -81,7 +77,7 @@ const ProductModal = ({
           </svg>
         </button>
 
-        {/* Gambar kiri */}
+        
         <div
           className="w-full sm:w-[42%] shrink-0 rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none overflow-hidden"
           style={{ minHeight: 300 }}
@@ -89,7 +85,7 @@ const ProductModal = ({
           <ProductImage src={product.gambar_url} alt={product.nama_produk} />
         </div>
 
-        {/* Detail kanan */}
+        
         <div className="flex flex-col justify-between p-6 sm:p-7 flex-1 min-w-0">
           <div>
             <h2
@@ -111,12 +107,12 @@ const ProductModal = ({
               </p>
             )}
 
-            {/* Harga */}
+            
             <p className="kol-harga-gradient text-2xl sm:text-3xl font-bold mb-5">
               {toRp(product.harga)}
             </p>
 
-            {/* Deskripsi */}
+            
             {product.deskripsi && (
               <div className="mb-5">
                 <p
@@ -134,7 +130,7 @@ const ProductModal = ({
               </div>
             )}
 
-            {/* Bahan Material */}
+            
             {product.bahan_material?.length > 0 && (
               <div className="mb-4">
                 <p
@@ -162,7 +158,7 @@ const ProductModal = ({
             )}
           </div>
 
-          {/* Buttons */}
+          
           <div className="flex gap-3 mt-8 flex-wrap">
             <button
               onClick={() => {
@@ -196,9 +192,7 @@ const ProductModal = ({
   );
 };
 
-/* ══════════════════════════════════════
-   MAIN PAGE
-══════════════════════════════════════ */
+
 export default function Koleksi() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -210,12 +204,12 @@ export default function Koleksi() {
   const [wishlistIds, setWishlistIds] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
-  /* ── Fetch produk & kategori ──────────────────── */
+  
   useEffect(() => {
     const fetchAll = async () => {
       setLoading(true);
 
-      // Produk
+      
       const { data: prods } = await supabase
         .from("products")
         .select("*, categories(nama_kategori)")
@@ -224,14 +218,14 @@ export default function Koleksi() {
 
       setProducts(prods || []);
 
-      // Kategori untuk filter chips
+      
       const { data: cats } = await supabase
         .from("categories")
         .select("nama_kategori")
         .order("nama_kategori");
       setCategories(cats?.map((c) => c.nama_kategori) || []);
 
-      // Wishlist user saat ini (dari localStorage sebagai key)
+      
       const userId =
         (await supabase.auth.getUser())?.data?.user?.id ||
         localStorage.getItem("userToken") ||
@@ -250,7 +244,7 @@ export default function Koleksi() {
     fetchAll();
   }, []);
 
-  /* ── Toggle Wishlist ────────────────────────────── */
+  
   const toggleWishlist = async (product) => {
     const userId =
       (await supabase.auth.getUser())?.data?.user?.id ||
@@ -266,22 +260,34 @@ export default function Koleksi() {
     const isIn = wishlistIds.includes(product.id);
 
     if (isIn) {
-      await supabase
+      const { error } = await supabase
         .from("wishlist")
         .delete()
         .eq("user_id", userId)
         .eq("product_id", product.id);
-      setWishlistIds((prev) => prev.filter((id) => id !== product.id));
+
+      if (error) {
+        console.error("Gagal menghapus wishlist:", error.message);
+        alert("Gagal menghapus wishlist: " + error.message);
+      } else {
+        setWishlistIds((prev) => prev.filter((id) => id !== product.id));
+      }
     } else {
-      await supabase
+      const { error } = await supabase
         .from("wishlist")
         .insert({ user_id: userId, product_id: product.id });
-      setWishlistIds((prev) => [...prev, product.id]);
+
+      if (error) {
+        console.error("Gagal menambah wishlist:", error.message);
+        alert("Gagal menambah wishlist. Pastikan RLS (Row Level Security) untuk tabel 'wishlist' di Supabase sudah dinonaktifkan atau diizinkan (Public/Authenticated)!\n\nDetail: " + error.message);
+      } else {
+        setWishlistIds((prev) => [...prev, product.id]);
+      }
     }
     setWishlistLoading(false);
   };
 
-  /* ── Order Now ──────────────────────────────────── */
+  
   const handleOrder = (product) => {
     navigate("/order", { state: { product } });
   };
@@ -318,7 +324,7 @@ export default function Koleksi() {
 
       <div className="px-6 sm:px-10 pb-16">
         <div className="max-w-7xl mx-auto">
-          {/* Search */}
+          
           <div className="relative mb-5 mx-auto max-w-3xl">
             <input
               type="text"
@@ -343,7 +349,7 @@ export default function Koleksi() {
             </svg>
           </div>
 
-          {/* Filter Chips */}
+          
           <div className="flex flex-wrap gap-2.5 mb-7 justify-center">
             {filters.map((f) => (
               <button
@@ -357,7 +363,7 @@ export default function Koleksi() {
           </div>
         </div>
 
-        {/* States */}
+        
         {loading ? (
           <div className="max-w-7xl mx-auto">
             <div className="kol-grid animate-pulse">
@@ -398,7 +404,7 @@ export default function Koleksi() {
                       alt={product.nama_produk}
                     />
 
-                    {/* Wishlist Button */}
+                    
                     <button
                       onClick={() => toggleWishlist(product)}
                       disabled={wishlistLoading}
@@ -418,7 +424,7 @@ export default function Koleksi() {
                       </svg>
                     </button>
 
-                    {/* Hover overlay */}
+                    
                     <div className="kol-card-overlay absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button
                         onClick={() => setSelected(product)}

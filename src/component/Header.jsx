@@ -26,7 +26,7 @@ export default function Header() {
       </div>
 
       <div id="icons-container" className="flex items-center space-x-4">
-        {/* Icons */}
+        
         <div
           id="notification-icon"
           className="relative p-3 bg-blue-100 rounded-2xl text-blue-500 cursor-pointer"

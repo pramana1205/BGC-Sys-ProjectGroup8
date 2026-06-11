@@ -14,18 +14,21 @@ export default function SidebarOwner() {
 
   return (
     <div className="flex flex-col w-64 min-h-screen bg-white shadow-md px-5 py-8">
-      {/* Brand */}
-      <div className="mb-8 pb-4 border-b border-gray-100">
-        <div
-          className="text-gradient-brand text-lg font-bold"
-          style={{ fontFamily: "var(--font-cinzel, serif)" }}
-        >
-          BlackGold Cherish
+      
+      <div className="mb-8 pb-4 border-b border-gray-100 flex items-center gap-3">
+        <img src="/Logo BGC.jpg" alt="Logo" className="w-10 h-10 object-contain rounded-lg border border-pink-100 shrink-0" />
+        <div>
+          <div
+            className="text-gradient-brand text-sm font-bold"
+            style={{ fontFamily: "var(--font-cinzel, serif)", lineHeight: "1.2" }}
+          >
+            BlackGold Cherish
+          </div>
+          <p className="text-[10px] text-gray-400 mt-1">Panel Pemilik Toko</p>
         </div>
-        <p className="text-xs text-gray-400 mt-2">Panel Pemilik Toko</p>
       </div>
 
-      {/* Menu */}
+      
       <nav className="flex-1 space-y-1">
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">
           📊 Analitik
@@ -57,38 +60,9 @@ export default function SidebarOwner() {
         </div>
       </nav>
 
-      <div
-        className="mt-6 py-3 px-3 text-center rounded-xl"
-        style={{
-          background: "linear-gradient(135deg, #1a0a10 0%, #2d1020 50%, #1a0a10 100%)",
-          border: "1px solid rgba(184,134,11,0.2)",
-        }}
-      >
-        <p
-          className="font-bold text-xs mb-0.5"
-          style={{
-            fontFamily: "var(--font-cinzel, serif)",
-            background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
-          BlackGold Cherish
-        </p>
-        <p
-          className="text-[9px] italic"
-          style={{ fontFamily: "var(--font-cormorant, serif)", color: "rgba(255,210,230,0.5)" }}
-        >
-          Koleksi Fashion Eksklusif
-        </p>
-        <p
-          className="text-[8px] mt-1"
-          style={{ color: "rgba(255,255,255,0.2)" }}
-        >
-          © 2023 BlackGold Cherish
-        </p>
-      </div>
+      <p className="text-[10px] text-gray-300 text-center mt-6">
+        © 2023 BlackGold Cherish
+      </p>
     </div>
   );
 }

@@ -12,7 +12,7 @@ const STEPS = [
   "Selesai",
 ];
 
-// Map orders.status_pesanan -> step index
+
 const STATUS_TO_STEP = {
   menunggu_konfirmasi: 0,
   dikonfirmasi:        1,
@@ -104,7 +104,7 @@ export default function StatusProduksi() {
 
             return (
               <div key={order.id} className="bg-white rounded-3xl border border-pink-100 p-7">
-                {/* Header */}
+                
                 <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
                   <div>
                     <p className="font-mono font-bold text-base" style={{ color: "#b8860b" }}>
@@ -121,14 +121,14 @@ export default function StatusProduksi() {
                   </div>
                 </div>
 
-                {/* Progress bar */}
+                
                 <div className="h-2 bg-pink-100 rounded-full mb-6 overflow-hidden">
                   <div className="h-2 rounded-full transition-all duration-700"
                     style={{ width: `${pct}%`, background: pct === 100 ? "#16a34a" : "linear-gradient(90deg,#e91e8c,#c9a227)" }}
                   />
                 </div>
 
-                {/* Timeline */}
+                
                 <div className="space-y-4">
                   {STEPS.map((label, idx) => {
                     const done     = idx <= currentStep;
@@ -167,7 +167,7 @@ export default function StatusProduksi() {
         )}
       </div>
 
-      {/* Decorative bottom */}
+      
       <div className="px-6 sm:px-10 pb-10 flex flex-col items-center gap-3">
         <GoldDivider opacity={0.2} className="w-full max-w-md" />
         <div className="flex items-center gap-6">
