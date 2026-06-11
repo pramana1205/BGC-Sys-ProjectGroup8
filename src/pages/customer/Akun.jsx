@@ -29,24 +29,18 @@ export default function Akun() {
       setLoading(true);
       setError("");
 
-      
-      const { data: authData, error: authErr } = await supabase.auth.getUser();
-      if (authErr || !authData?.user) {
-        
-        const userId = localStorage.getItem("userToken") || sessionStorage.getItem("userToken");
-        if (!userId || userId === "admin-token" || userId === "owner-token") {
-          setError("Sesi tidak valid. Silakan login ulang.");
-          setLoading(false);
-          return;
-        }
-      }
-
+      const { data: authData } = await supabase.auth.getUser();
       const authUser = authData?.user;
       const userId   = authUser?.id
         || localStorage.getItem("userToken")
         || sessionStorage.getItem("userToken");
 
-      
+      if (!userId || userId === "admin-token" || userId === "owner-token") {
+        setProfile(null);
+        setLoading(false);
+        return;
+      }
+
       const { data: userRow, error: userErr } = await supabase
         .from("users")
         .select("*")
@@ -54,7 +48,6 @@ export default function Akun() {
         .single();
 
       if (userErr || !userRow) {
-        
         if (authUser) {
           const fallbackName = authUser.user_metadata?.full_name
             || authUser.user_metadata?.name
@@ -87,11 +80,27 @@ export default function Akun() {
             no_hp:  newProfile.no_hp,
             alamat: "",
           });
+
+          const { data: orders } = await supabase
+            .from("orders")
+            .select("status_pesanan, total_harga")
+            .eq("user_id", authUser.id);
+
+          if (orders) {
+            const totalTx = orders.reduce((acc, o) => acc + (o.total_harga || 0), 0);
+            setStats({
+              total:     orders.length,
+              selesai:   orders.filter(o => o.status_pesanan === "selesai").length,
+              proses:    orders.filter(o => ["produksi", "menunggu", "dikirim"].includes(o.status_pesanan)).length,
+              transaksi: totalTx,
+            });
+          }
+
           setLoading(false);
           return;
         }
 
-        setError("Gagal memuat data profil.");
+        setProfile(null);
         setLoading(false);
         return;
       }
@@ -104,18 +113,17 @@ export default function Akun() {
         alamat: userRow.alamat || "",
       });
 
-      
       const { data: orders } = await supabase
-        .from("pesanan")
-        .select("status, total_harga")
+        .from("orders")
+        .select("status_pesanan, total_harga")
         .eq("user_id", userId);
 
       if (orders) {
         const totalTx = orders.reduce((acc, o) => acc + (o.total_harga || 0), 0);
         setStats({
           total:     orders.length,
-          selesai:   orders.filter(o => o.status === "selesai").length,
-          proses:    orders.filter(o => ["produksi", "menunggu", "dikirim"].includes(o.status)).length,
+          selesai:   orders.filter(o => o.status_pesanan === "selesai").length,
+          proses:    orders.filter(o => ["produksi", "menunggu", "dikirim"].includes(o.status_pesanan)).length,
           transaksi: totalTx,
         });
       }
@@ -212,9 +220,29 @@ export default function Akun() {
             </div>
             <div className="bg-pink-50 rounded-3xl h-56" />
           </div>
-        ) : profile ? (
+        ) : !profile ? (
+          <div className="bg-white rounded-3xl border border-pink-100 p-10 text-center max-w-md mx-auto shadow-sm">
+            <div className="w-16 h-16 rounded-full bg-pink-50 flex items-center justify-center mx-auto mb-6">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#b8860b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold mb-3" style={{ color: "#1a0a10", fontFamily: "var(--font-playfair,serif)" }}>
+              Belum Masuk Akun
+            </h2>
+            <p className="text-sm mb-8 leading-relaxed" style={{ color: "#a07080" }}>
+              Silakan masuk ke akun BlackGold Cherish Anda untuk memantau status pesanan, mengelola profil, dan melihat riwayat belanja.
+            </p>
+            <button
+              onClick={() => navigate("/login")}
+              className="w-full kol-btn-pesan py-3.5 rounded-full text-white text-sm font-semibold hover:shadow-lg transition-all"
+            >
+              Masuk ke Akun
+            </button>
+          </div>
+        ) : (
           <>
-            
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
               {statItems.map((s) => (
                 <div key={s.label} className="bg-white rounded-2xl border border-pink-100 px-5 py-5">
@@ -224,11 +252,9 @@ export default function Akun() {
               ))}
             </div>
 
-            
             <div className="bg-white rounded-3xl border border-pink-100 p-8 mb-6">
               <div className="flex items-center justify-between mb-7 flex-wrap gap-3">
                 <div className="flex items-center gap-5">
-                  
                   {profile.avatar_url ? (
                     <img
                       src={profile.avatar_url}
@@ -291,7 +317,6 @@ export default function Akun() {
               </div>
             </div>
 
-            
             <div className="bg-white rounded-3xl border border-pink-100 p-6">
               <p className="font-semibold text-sm mb-4" style={{ color: "#1a0a10" }}>Aksi Cepat</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -312,9 +337,8 @@ export default function Akun() {
               </div>
             </div>
           </>
-        ) : null}
+        )}
 
-        
         <div className="mt-8 mb-2">
           <GoldDivider opacity={0.25} />
           <div className="flex justify-center gap-8 mt-3 mb-1">
@@ -324,17 +348,19 @@ export default function Akun() {
           </div>
         </div>
 
-        <button
-          onClick={handleLogout}
-          className="mt-4 flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-500 transition-colors px-2"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-          Keluar dari Akun
-        </button>
+        {profile && (
+          <button
+            onClick={handleLogout}
+            className="mt-4 flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-500 transition-colors px-2"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Keluar dari Akun
+          </button>
+        )}
       </div>
     </div>
   );

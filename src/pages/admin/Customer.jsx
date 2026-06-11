@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 
-const toRp = (n) => "Rp " + Number(n).toLocaleString("id-ID");
+const toRp = (n) => "Rp " + Number(n || 0).toLocaleString("id-ID");
 
 
 const getLoyalitas = (totalBelanja) => {
@@ -51,25 +51,40 @@ export default function DataPelanggan() {
       }
 
       
-      const enriched = await Promise.all(
-        (users || []).map(async (user) => {
-          const { data: orders } = await supabase
-            .from("pesanan")
-            .select("total_harga, status")
-            .eq("user_id", user.id);
+      const { data: orders, error: ordersErr } = await supabase
+        .from("orders")
+        .select("user_id, total_harga, status_pesanan");
 
-          const totalPesanan  = orders?.length || 0;
-          const totalBelanja  = orders?.reduce((sum, o) => sum + (o.total_harga || 0), 0) || 0;
-          const loyalitas     = getLoyalitas(totalBelanja);
+      if (ordersErr) {
+        setError("Gagal memuat data pesanan: " + ordersErr.message);
+        setLoading(false);
+        return;
+      }
 
-          return {
-            ...user,
-            totalPesanan,
-            totalBelanja,
-            loyalitas,
-          };
-        })
-      );
+      const ordersByUser = {};
+      (orders || []).forEach(o => {
+        if (!o.user_id) return;
+        if (!ordersByUser[o.user_id]) {
+          ordersByUser[o.user_id] = [];
+        }
+        ordersByUser[o.user_id].push(o);
+      });
+
+      const enriched = (users || []).map(user => {
+        const userOrders = ordersByUser[user.id] || [];
+        const totalPesanan = userOrders.length;
+        const totalBelanja = userOrders
+          .filter(o => o.status_pesanan !== "dibatalkan")
+          .reduce((sum, o) => sum + (o.total_harga || 0), 0);
+        const loyalitas = getLoyalitas(totalBelanja);
+
+        return {
+          ...user,
+          totalPesanan,
+          totalBelanja,
+          loyalitas,
+        };
+      });
 
       setCustomers(enriched);
       setLoading(false);
