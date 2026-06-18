@@ -63,6 +63,15 @@ export default function OrdersDetail() {
     setUpdating(false);
   };
 
+  const konfirmasiPembayaran = async (orderId) => {
+    await updateStatus(orderId, "dikonfirmasi");
+  };
+
+  const tolakPembayaran = async (orderId) => {
+    if (!confirm("Tolak pembayaran ini? Pesanan akan dibatalkan.")) return;
+    await updateStatus(orderId, "dibatalkan");
+  };
+
   const batalkanPesanan = async (orderId) => {
     if (!confirm("Batalkan pesanan ini?")) return;
     await updateStatus(orderId, "dibatalkan");
@@ -83,6 +92,7 @@ export default function OrdersDetail() {
     { label: "Menunggu",       value: orders.filter(o => o.status_pesanan === "menunggu_konfirmasi").length, color: "#b8860b" },
     { label: "Diproses",       value: orders.filter(o => ["dikonfirmasi","produksi","quality_check","siap_kirim","dikirim"].includes(o.status_pesanan)).length, color: "#e91e8c" },
     { label: "Selesai",        value: orders.filter(o => o.status_pesanan === "selesai").length,  color: "#16a34a" },
+    { label: "Bukti Masuk",    value: orders.filter(o => o.bukti_transfer).length, color: "#7c3aed" },
   ];
 
   return (
@@ -101,7 +111,7 @@ export default function OrdersDetail() {
       </div>
 
       
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
         {statCards.map(s => (
           <div key={s.label} className="bg-white rounded-2xl border border-pink-100 px-5 py-4">
             <p className="text-2xl font-bold" style={{ color: s.color }}>{loading ? "—" : s.value}</p>
@@ -212,6 +222,49 @@ export default function OrdersDetail() {
                 <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Alamat Pengiriman</p>
                 <p className="font-semibold text-slate-700 text-xs">{selected.alamat_pengiriman || "—"}</p>
               </div>
+            </div>
+
+            {/* ===== BUKTI TRANSFER SECTION ===== */}
+            <div className="bg-white rounded-xl p-5 shadow-sm">
+              <p className="font-bold text-sm mb-3">💳 Bukti Pembayaran</p>
+              {selected.bukti_transfer ? (
+                <div className="space-y-3">
+                  <a href={selected.bukti_transfer} target="_blank" rel="noreferrer">
+                    <img
+                      src={selected.bukti_transfer}
+                      alt="Bukti Transfer"
+                      className="w-full rounded-xl border border-pink-100 object-cover max-h-48 cursor-pointer hover:opacity-90 transition-opacity"
+                    />
+                  </a>
+                  <p className="text-xs text-gray-400 text-center">Klik gambar untuk buka full size</p>
+                  {selected.status_pesanan === "menunggu_konfirmasi" && (
+                    <div className="flex gap-2">
+                      <button
+                        disabled={updating}
+                        onClick={() => konfirmasiPembayaran(selected.id)}
+                        className="flex-1 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm disabled:opacity-60"
+                      >
+                        ✓ Konfirmasi Pembayaran
+                      </button>
+                      <button
+                        disabled={updating}
+                        onClick={() => tolakPembayaran(selected.id)}
+                        className="flex-1 py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-sm disabled:opacity-60"
+                      >
+                        ✗ Tolak
+                      </button>
+                    </div>
+                  )}
+                  {selected.status_pesanan !== "menunggu_konfirmasi" && (
+                    <p className="text-xs text-center text-gray-400">Pembayaran sudah diproses</p>
+                  )}
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-gray-200 rounded-xl px-4 py-6 text-center">
+                  <p className="text-sm text-gray-400">Belum ada bukti transfer</p>
+                  <p className="text-xs text-gray-300 mt-1">Customer belum upload bukti pembayaran</p>
+                </div>
+              )}
             </div>
 
             {selected.status_pesanan !== "dibatalkan" && (() => {

@@ -19,6 +19,9 @@ export default function OrderPage() {
   const [submitted, setSubmitted]     = useState(false);
   const [orderId, setOrderId]         = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [buktiFile, setBuktiFile]     = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadDone, setUploadDone]   = useState(false);
 
   
   useEffect(() => {
@@ -151,32 +154,165 @@ export default function OrderPage() {
     setSubmitted(true);
   };
 
-  
+  // Upload bukti transfer ke Supabase Storage
+  const handleUploadBukti = async () => {
+    if (!buktiFile || !orderId) return;
+    setIsUploading(true);
+    const ext  = buktiFile.name.split(".").pop();
+    const path = `bukti/${orderId}.${ext}`;
+    const { error: upErr } = await supabase.storage
+      .from("payment-proofs")
+      .upload(path, buktiFile, { upsert: true });
+    if (upErr) {
+      alert("Gagal upload: " + upErr.message);
+      setIsUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("payment-proofs").getPublicUrl(path);
+    await supabase.from("orders").update({ bukti_transfer: urlData.publicUrl }).eq("id", orderId);
+    setIsUploading(false);
+    setUploadDone(true);
+  };
+
+  const REKENING = [
+    { bank: "BCA",    no: "1234567890",  nama: "BlackGold Cherish" },
+    { bank: "Mandiri", no: "0987654321", nama: "BlackGold Cherish" },
+    { bank: "BNI",    no: "1122334455",  nama: "BlackGold Cherish" },
+  ];
+
   if (submitted) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center px-6 py-20 text-center">
-        <div className="text-6xl mb-6">🎉</div>
-        <h2 className="font-bold text-3xl mb-3" style={{ fontFamily: "var(--font-playfair,serif)", color: "#b8860b" }}>
-          Pre-Order Berhasil!
-        </h2>
-        <p className="text-sm mb-2" style={{ color: "#6b4a58" }}>
-          Terima kasih, <strong>{form.nama}</strong>. Pesanan Anda sedang diproses.
-        </p>
-        <p className="text-sm mb-2" style={{ color: "#6b4a58" }}>
-          Total pembayaran: <strong className="kol-harga-gradient">{toRp(total)}</strong>
-        </p>
-        {orderId && (
+    // COD → langsung sukses, tidak perlu upload
+    if (form.payment === "cod") {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center px-6 py-20 text-center">
+          <div className="text-6xl mb-6">🎉</div>
+          <h2 className="font-bold text-3xl mb-3" style={{ fontFamily: "var(--font-playfair,serif)", color: "#b8860b" }}>
+            Pre-Order Berhasil!
+          </h2>
+          <p className="text-sm mb-2" style={{ color: "#6b4a58" }}>
+            Terima kasih, <strong>{form.nama}</strong>. Pesanan Anda akan dikonfirmasi oleh tim kami.
+          </p>
           <p className="text-xs mb-8 font-mono" style={{ color: "#a07080" }}>
             ID Pesanan: #{String(orderId).slice(0, 8).toUpperCase()}
           </p>
-        )}
-        <div className="flex gap-3 flex-wrap justify-center">
-          <button onClick={() => navigate("/riwayat")} className="kol-btn-pesan px-8 py-3 rounded-full text-white text-sm font-semibold">
-            Lihat Riwayat Pesanan
-          </button>
-          <button onClick={() => navigate("/koleksi")} className="btn-outline-cherry px-8 py-3 rounded-full text-sm font-semibold" style={{ color: "#8b4050" }}>
-            Lanjut Belanja
-          </button>
+          <div className="flex gap-3 flex-wrap justify-center">
+            <button onClick={() => navigate("/riwayat")} className="kol-btn-pesan px-8 py-3 rounded-full text-white text-sm font-semibold">
+              Lihat Riwayat
+            </button>
+            <button onClick={() => navigate("/koleksi")} className="btn-outline-cherry px-8 py-3 rounded-full text-sm font-semibold" style={{ color: "#8b4050" }}>
+              Lanjut Belanja
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Transfer Bank / E-Wallet → tampilkan instruksi + upload bukti
+    return (
+      <div className="min-h-screen bg-[#fffafb] px-6 sm:px-10 py-12">
+        <div className="max-w-lg mx-auto space-y-6">
+          {/* Header sukses */}
+          <div className="text-center">
+            <div className="text-5xl mb-4">✅</div>
+            <h2 className="font-bold text-2xl mb-1" style={{ fontFamily: "var(--font-playfair,serif)", color: "#b8860b" }}>
+              Pesanan Diterima!
+            </h2>
+            <p className="text-sm" style={{ color: "#6b4a58" }}>
+              ID Pesanan:{" "}
+              <span className="font-mono font-bold">#{String(orderId).slice(0, 8).toUpperCase()}</span>
+            </p>
+          </div>
+
+          {/* Total */}
+          <div className="bg-pink-50 border border-pink-200 rounded-2xl px-6 py-4 text-center">
+            <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: "#a07080" }}>Total Pembayaran</p>
+            <p className="text-3xl font-extrabold kol-harga-gradient">{toRp(total)}</p>
+            <p className="text-xs mt-1" style={{ color: "#a07080" }}>Metode: {form.payment === "ewallet" ? "E-Wallet" : "Transfer Bank"}</p>
+          </div>
+
+          {/* Instruksi rekening */}
+          <div className="bg-white border border-pink-100 rounded-2xl p-6">
+            <p className="font-bold text-base mb-4" style={{ color: "#1a0a10" }}>🏦 Rekening Pembayaran</p>
+            <div className="space-y-3">
+              {(form.payment === "ewallet"
+                ? [{ bank: "GoPay / OVO / Dana", no: "08123456789", nama: "BlackGold Cherish" }]
+                : REKENING
+              ).map((r) => (
+                <div key={r.bank} className="flex justify-between items-center bg-pink-50 rounded-xl px-4 py-3">
+                  <div>
+                    <p className="font-bold text-sm" style={{ color: "#1a0a10" }}>{r.bank}</p>
+                    <p className="font-mono text-lg font-bold" style={{ color: "#b8860b" }}>{r.no}</p>
+                    <p className="text-xs" style={{ color: "#a07080" }}>a.n. {r.nama}</p>
+                  </div>
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(r.no); }}
+                    className="text-xs px-3 py-1.5 rounded-lg border border-pink-200 text-pink-500 hover:bg-pink-100 transition-colors"
+                  >
+                    Salin
+                  </button>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs mt-4 text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+              ⚠️ Harap transfer tepat sesuai nominal. Sertakan ID pesanan sebagai keterangan transfer.
+            </p>
+          </div>
+
+          {/* Upload bukti */}
+          {!uploadDone ? (
+            <div className="bg-white border border-pink-100 rounded-2xl p-6">
+              <p className="font-bold text-base mb-1" style={{ color: "#1a0a10" }}>📎 Upload Bukti Transfer</p>
+              <p className="text-xs mb-4" style={{ color: "#a07080" }}>Upload foto/screenshot bukti transfer Anda agar pesanan segera dikonfirmasi.</p>
+              <label className="block cursor-pointer">
+                <div className={`border-2 border-dashed rounded-2xl px-6 py-8 text-center transition-colors ${
+                  buktiFile ? "border-pink-400 bg-pink-50" : "border-pink-200 hover:border-pink-300"
+                }`}>
+                  {buktiFile ? (
+                    <>
+                      <div className="text-3xl mb-2">🖼️</div>
+                      <p className="text-sm font-semibold" style={{ color: "#b8860b" }}>{buktiFile.name}</p>
+                      <p className="text-xs mt-1" style={{ color: "#a07080" }}>Klik untuk ganti file</p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-3xl mb-2">📤</div>
+                      <p className="text-sm font-medium" style={{ color: "#6b4a58" }}>Klik atau drag foto bukti transfer</p>
+                      <p className="text-xs mt-1" style={{ color: "#a07080" }}>JPG, PNG, atau PDF · Maks 5MB</p>
+                    </>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  className="hidden"
+                  onChange={(e) => setBuktiFile(e.target.files?.[0] || null)}
+                />
+              </label>
+              <button
+                onClick={handleUploadBukti}
+                disabled={!buktiFile || isUploading}
+                className="mt-4 w-full py-3 rounded-full text-white text-sm font-bold disabled:opacity-50 transition-all"
+                style={{ background: "linear-gradient(135deg, #e91e8c, #c9a227)" }}
+              >
+                {isUploading ? "Mengunggah..." : "Kirim Bukti Transfer"}
+              </button>
+            </div>
+          ) : (
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+              <div className="text-4xl mb-3">✅</div>
+              <p className="font-bold text-base" style={{ color: "#16a34a" }}>Bukti Transfer Diterima!</p>
+              <p className="text-xs mt-1" style={{ color: "#6b7280" }}>Tim kami akan segera memverifikasi pembayaran Anda.</p>
+            </div>
+          )}
+
+          <div className="flex gap-3 flex-wrap">
+            <button onClick={() => navigate("/riwayat")} className="flex-1 kol-btn-pesan py-3 rounded-full text-white text-sm font-semibold">
+              Lihat Riwayat
+            </button>
+            <button onClick={() => navigate("/koleksi")} className="flex-1 btn-outline-cherry py-3 rounded-full text-sm font-semibold" style={{ color: "#8b4050" }}>
+              Lanjut Belanja
+            </button>
+          </div>
         </div>
       </div>
     );
