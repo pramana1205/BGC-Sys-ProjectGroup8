@@ -38,7 +38,6 @@ export default function AuthCallback() {
 
       const user = data.user;
 
-      // Check if user already exists
       const { data: dbUser } = await supabase
         .from("users")
         .select("role")
@@ -48,7 +47,6 @@ export default function AuthCallback() {
       let userRole = dbUser?.role;
 
       if (!userRole) {
-        // User baru Google OAuth → SELALU customer, terlepas dari nama/email
         userRole = getDefaultRole();
         await supabase.from("users").insert({
           id:         user.id,

@@ -224,7 +224,6 @@ export default function OrdersDetail() {
               </div>
             </div>
 
-            {/* ===== BUKTI TRANSFER SECTION ===== */}
             <div className="bg-white rounded-xl p-5 shadow-sm">
               <p className="font-bold text-sm mb-3">💳 Bukti Pembayaran</p>
               {selected.bukti_transfer ? (

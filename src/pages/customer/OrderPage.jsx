@@ -154,7 +154,6 @@ export default function OrderPage() {
     setSubmitted(true);
   };
 
-  // Upload bukti transfer ke Supabase Storage
   const handleUploadBukti = async () => {
     if (!buktiFile || !orderId) return;
     setIsUploading(true);
@@ -181,7 +180,6 @@ export default function OrderPage() {
   ];
 
   if (submitted) {
-    // COD → langsung sukses, tidak perlu upload
     if (form.payment === "cod") {
       return (
         <div className="min-h-[60vh] flex flex-col items-center justify-center px-6 py-20 text-center">
@@ -207,11 +205,9 @@ export default function OrderPage() {
       );
     }
 
-    // Transfer Bank / E-Wallet → tampilkan instruksi + upload bukti
     return (
       <div className="min-h-screen bg-[#fffafb] px-6 sm:px-10 py-12">
         <div className="max-w-lg mx-auto space-y-6">
-          {/* Header sukses */}
           <div className="text-center">
             <div className="text-5xl mb-4">✅</div>
             <h2 className="font-bold text-2xl mb-1" style={{ fontFamily: "var(--font-playfair,serif)", color: "#b8860b" }}>
@@ -223,14 +219,12 @@ export default function OrderPage() {
             </p>
           </div>
 
-          {/* Total */}
           <div className="bg-pink-50 border border-pink-200 rounded-2xl px-6 py-4 text-center">
             <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: "#a07080" }}>Total Pembayaran</p>
             <p className="text-3xl font-extrabold kol-harga-gradient">{toRp(total)}</p>
             <p className="text-xs mt-1" style={{ color: "#a07080" }}>Metode: {form.payment === "ewallet" ? "E-Wallet" : "Transfer Bank"}</p>
           </div>
 
-          {/* Instruksi rekening */}
           <div className="bg-white border border-pink-100 rounded-2xl p-6">
             <p className="font-bold text-base mb-4" style={{ color: "#1a0a10" }}>🏦 Rekening Pembayaran</p>
             <div className="space-y-3">
