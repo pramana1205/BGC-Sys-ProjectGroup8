@@ -1,3 +1,4 @@
+import React from "react";
 import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
 import {
   LuTag,
@@ -5,6 +6,9 @@ import {
   LuHistory,
   LuCircleUserRound,
   LuHeart,
+  LuMapPin,
+  LuMail,
+  LuPhone,
 } from "react-icons/lu";
 import { FaTiktok, FaInstagram, FaWhatsapp } from "react-icons/fa";
 
@@ -96,89 +100,193 @@ function SocialIcon({ id, icon: Icon, label, href, hoverColor, glowColor, bg, ho
   );
 }
 
+// ── Footer column helper ──────────────────────────────────────────
+const COL_HEADING = {
+  fontSize: "11px",
+  fontWeight: 800,
+  letterSpacing: "0.16em",
+  textTransform: "uppercase",
+  background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  backgroundClip: "text",
+  marginBottom: "14px",
+  display: "block",
+};
+
+const COL_DIVIDER = {
+  width: "100%",
+  height: "1px",
+  background: "linear-gradient(90deg, rgba(184,134,11,0.35), transparent)",
+  marginBottom: "14px",
+};
+
+function FooterLink({ to, href, children }) {
+  const base = {
+    fontSize: "12px",
+    color: "rgba(255,220,235,0.55)",
+    textDecoration: "none",
+    display: "block",
+    paddingBottom: "7px",
+    transition: "color 0.2s",
+    cursor: "pointer",
+  };
+  const hover = { color: "#e8c862" };
+  const [hov, setHov] = React.useState(false);
+  const style = { ...base, ...(hov ? hover : {}) };
+  if (to)
+    return (
+      <Link to={to} style={style} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
+        {children}
+      </Link>
+    );
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" style={style} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
+      {children}
+    </a>
+  );
+}
+
 function Footer() {
   return (
     <footer
       style={{
-        background: "linear-gradient(135deg, #1a0a10 0%, #2d1020 50%, #1a0a10 100%)",
-        borderTop: "1px solid rgba(184,134,11,0.2)",
+        background: "linear-gradient(160deg, #140608 0%, #2a0e18 45%, #140608 100%)",
+        borderTop: "1px solid rgba(184,134,11,0.25)",
       }}
-      className="mt-auto py-8 px-6 text-center"
     >
-      {/* Brand */}
-      <p
-        className="font-bold text-lg mb-1"
+      {/* ── Main grid ── */}
+      <div
         style={{
-          fontFamily: "var(--font-cinzel, serif)",
-          background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "48px 32px 32px",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+          gap: "36px 28px",
+          alignItems: "start",
         }}
       >
-        BlackGold Cherish
-      </p>
-      <p
-        className="text-sm italic mb-6"
-        style={{
-          fontFamily: "var(--font-cormorant, serif)",
-          color: "rgba(255,210,230,0.6)",
-        }}
-      >
-        Koleksi Fashion Eksklusif untuk Wanita Modern dan Elegan
-      </p>
+        {/* ── Col 1: Brand ── */}
+        <div>
+          <p
+            style={{
+              fontFamily: "var(--font-cinzel, serif)",
+              background: "linear-gradient(90deg, #b8860b, #e8c862, #b8860b)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              fontWeight: 800,
+              fontSize: "16px",
+              marginBottom: "8px",
+            }}
+          >
+            BlackGold Cherish
+          </p>
+          <p
+            style={{
+              fontFamily: "var(--font-cormorant, serif)",
+              color: "rgba(255,210,230,0.5)",
+              fontSize: "12px",
+              fontStyle: "italic",
+              lineHeight: 1.6,
+              marginBottom: "16px",
+            }}
+          >
+            {/* ✏️ Ganti tagline butik di sini */}
+            Koleksi Fashion Eksklusif untuk Wanita Modern dan Elegan.
+          </p>
+          {/* Social icons */}
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            {SOCIAL_LINKS.map((s) => (
+              <SocialIcon key={s.id} {...s} />
+            ))}
+          </div>
+        </div>
 
-      {/* Social Media */}
-      <div style={{ marginBottom: "20px" }}>
-        <p
-          style={{
-            fontSize: "10px",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            color: "rgba(184,134,11,0.55)",
-            fontWeight: 700,
-            marginBottom: "12px",
-          }}
-        >
-          ✦ Temukan Kami di ✦
-        </p>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-            flexWrap: "wrap",
-          }}
-        >
-          {SOCIAL_LINKS.map((social) => (
-            <SocialIcon key={social.id} {...social} />
-          ))}
+        {/* ── Col 2: Hubungi Kami ── */}
+        <div>
+          <span style={COL_HEADING}>Hubungi Kami</span>
+          <div style={COL_DIVIDER} />
+
+          {/* ✏️ Ganti nomor WA di sini */}
+          <a
+            href="https://wa.me/6285761004981"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "10px", textDecoration: "none" }}
+          >
+            <LuPhone size={13} style={{ color: "#25D366", marginTop: "2px", flexShrink: 0 }} />
+            <span style={{ fontSize: "12px", color: "rgba(255,220,235,0.6)", lineHeight: 1.5 }}>
+              0857-6100-4981
+              <br />
+              <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>(WhatsApp / Retail)</span>
+            </span>
+          </a>
+
+          {/* ✏️ Ganti email di sini */}
+          <a
+            href="mailto:blackgoldcherish@gmail.com"
+            style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "10px", textDecoration: "none" }}
+          >
+            <LuMail size={13} style={{ color: "#e8c862", marginTop: "2px", flexShrink: 0 }} />
+            <span style={{ fontSize: "12px", color: "rgba(255,220,235,0.6)", lineHeight: 1.5 }}>
+              blackgoldcherish@gmail.com
+            </span>
+          </a>
+
+          {/* ✏️ Ganti alamat di sini */}
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+            <LuMapPin size={13} style={{ color: "#e8c862", marginTop: "2px", flexShrink: 0 }} />
+            <span style={{ fontSize: "12px", color: "rgba(255,220,235,0.6)", lineHeight: 1.6 }}>
+              Jl. Contoh No. 1,<br />
+              Kota Anda, Indonesia
+            </span>
+          </div>
+        </div>
+
+        {/* ── Col 3: Telusuri ── */}
+        <div>
+          <span style={COL_HEADING}>Telusuri</span>
+          <div style={COL_DIVIDER} />
+          {/* ✏️ Tambah/hapus link navigasi sesuai halaman yang ada */}
+          <FooterLink to="/koleksi">Koleksi</FooterLink>
+          <FooterLink to="/wishlist">Wishlist</FooterLink>
+          <FooterLink to="/order">Buat Pesanan</FooterLink>
+          <FooterLink to="/riwayat">Riwayat Pesanan</FooterLink>
+          <FooterLink to="/akun">Akun Saya</FooterLink>
+          <FooterLink to="/feedback">Testimoni</FooterLink>
+        </div>
+
+        {/* ── Col 4: Bantuan ── */}
+        <div>
+          <span style={COL_HEADING}>Bantuan</span>
+          <div style={COL_DIVIDER} />
+          {/* ✏️ Sesuaikan link bantuan / tambah halaman FAQ dll */}
+          <FooterLink to="/terms">Syarat &amp; Ketentuan</FooterLink>
+          <FooterLink to="/faq">FAQ</FooterLink>
+          <FooterLink to="/panduan-pembayaran">Panduan Pembayaran</FooterLink>
+          <FooterLink to="/panduan-pengiriman">Info Pengiriman</FooterLink>
+          <FooterLink to="/size-guide">Size Guide</FooterLink>
         </div>
       </div>
 
-      {/* Gold Divider */}
+      {/* ── Bottom bar ── */}
       <div
         style={{
-          width: "80px",
-          height: "1px",
-          background: "linear-gradient(90deg, transparent, rgba(184,134,11,0.5), transparent)",
-          margin: "0 auto 14px",
+          borderTop: "1px solid rgba(184,134,11,0.12)",
+          padding: "14px 32px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexWrap: "wrap",
+          gap: "8px",
         }}
-      />
-
-      {/* Copyright */}
-      <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.25)" }}>
-        © 2023 BlackGold Cherish. All rights reserved.
-      </p>
-      <div className="mt-2 flex items-center justify-center">
-        <Link
-          to="/terms"
-          className="text-[10px] underline underline-offset-2 hover:opacity-80 transition-opacity"
-          style={{ color: "rgba(184,134,11,0.6)" }}
-        >
-          Syarat & Ketentuan
-        </Link>
+      >
+        <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.2)", margin: 0 }}>
+          {/* ✏️ Ganti tahun kalau perlu */}
+          © 2025 BlackGold Cherish. All rights reserved.
+        </p>
       </div>
     </footer>
   );

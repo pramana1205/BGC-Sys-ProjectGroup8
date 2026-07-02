@@ -22,6 +22,10 @@ const Feedback = lazy(() => import("./pages/customer/Feedback"));
 const Akun = lazy(() => import("./pages/customer/Akun"));
 const Wishlist = lazy(() => import("./pages/customer/Wishlist"));
 const TermsOfService = lazy(() => import("./pages/customer/TermsOfService"));
+const FAQ = lazy(() => import("./pages/customer/FAQ"));
+const PanduanPembayaran = lazy(() => import("./pages/customer/PanduanPembayaran"));
+const InfoPengiriman = lazy(() => import("./pages/customer/InfoPengiriman"));
+const SizeGuide = lazy(() => import("./pages/customer/SizeGuide"));
 
 const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
 const OrdersDetail = lazy(() => import("./pages/admin/OrdersDetail"));
@@ -56,10 +60,12 @@ export default function App() {
           <Route path="/status-produksi" element={<StatusProduksi />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/akun" element={<Akun />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/panduan-pembayaran" element={<PanduanPembayaran />} />
+          <Route path="/panduan-pengiriman" element={<InfoPengiriman />} />
+          <Route path="/size-guide" element={<SizeGuide />} />
         </Route>
-
-        {/* Public standalone route — no auth required */}
-        <Route path="/terms" element={<TermsOfService />} />
 
         <Route element={<AdminLayouts />}>
           <Route path="/dashboard" element={<Dashboard />} />

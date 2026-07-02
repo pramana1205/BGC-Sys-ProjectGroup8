@@ -270,7 +270,7 @@ export default function TermsOfService() {
                 border: "1px solid rgba(184,134,11,0.12)",
               }}
             >
-              <p><strong>Email:</strong> support@blackgoldcherish.com</p>
+              <p><strong>Email:</strong> adminbgcherish@gmail.com</p>
               <p style={{ marginTop: "6px" }}><strong>Platform:</strong> Melalui fitur Feedback di aplikasi</p>
               <p style={{ marginTop: "6px" }}><strong>Jam Operasional:</strong> Senin &ndash; Sabtu, 08.00 &ndash; 17.00 WIB</p>
             </div>
