@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 
+const CART_KEY = "bgc_cart";
+
 const toRp = (n) => "Rp " + Number(n).toLocaleString("id-ID");
 
 
@@ -45,9 +47,12 @@ const ProductModal = ({
   onWishlist,
   wishlistIds,
   onOrder,
+  onAddToCart,
+  cartIds,
 }) => {
   if (!product) return null;
   const isWishlisted = wishlistIds.includes(product.id);
+  const inCart = cartIds.includes(product.id);
 
   return (
     <div
@@ -158,7 +163,7 @@ const ProductModal = ({
             )}
           </div>
 
-          
+
           <div className="flex gap-3 mt-8 flex-wrap">
             <button
               onClick={() => {
@@ -169,9 +174,26 @@ const ProductModal = ({
             >
               Pesan Sekarang
             </button>
+
+            <button
+              onClick={() => onAddToCart(product)}
+              className={`flex-1 min-w-[130px] py-3.5 rounded-full text-sm font-semibold tracking-wide flex items-center justify-center gap-2 border-2 transition-all duration-200 ${
+                inCart
+                  ? "bg-amber-50 border-amber-400 text-amber-700"
+                  : "border-pink-300 text-pink-600 hover:bg-pink-50"
+              }`}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 01-8 0"/>
+              </svg>
+              {inCart ? "Di Keranjang ✓" : "+ Keranjang"}
+            </button>
+
             <button
               onClick={() => onWishlist(product)}
-              className={`kol-btn-wishlist flex-1 min-w-[130px] py-3.5 rounded-full text-sm font-semibold tracking-wide flex items-center justify-center gap-2 ${isWishlisted ? "kol-btn-wishlist--on" : ""}`}
+              className={`kol-btn-wishlist min-w-[48px] px-4 py-3.5 rounded-full text-sm font-semibold tracking-wide flex items-center justify-center gap-2 ${isWishlisted ? "kol-btn-wishlist--on" : ""}`}
             >
               <svg
                 width="15"
@@ -203,13 +225,14 @@ export default function Koleksi() {
   const [selected, setSelected] = useState(null);
   const [wishlistIds, setWishlistIds] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [cartIds, setCartIds] = useState([]);
+  const [cartToast, setCartToast] = useState(null);
 
-  
+
   useEffect(() => {
     const fetchAll = async () => {
       setLoading(true);
 
-      
       const { data: prods } = await supabase
         .from("products")
         .select("*, categories(nama_kategori)")
@@ -218,14 +241,12 @@ export default function Koleksi() {
 
       setProducts(prods || []);
 
-      
       const { data: cats } = await supabase
         .from("categories")
         .select("nama_kategori")
         .order("nama_kategori");
       setCategories(cats?.map((c) => c.nama_kategori) || []);
 
-      
       const userId =
         (await supabase.auth.getUser())?.data?.user?.id ||
         localStorage.getItem("userToken") ||
@@ -238,6 +259,9 @@ export default function Koleksi() {
           .eq("user_id", userId);
         setWishlistIds((wl || []).map((w) => w.product_id));
       }
+
+      const savedCart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+      setCartIds(savedCart.map((item) => item.id));
 
       setLoading(false);
     };
@@ -287,7 +311,36 @@ export default function Koleksi() {
     setWishlistLoading(false);
   };
 
-  
+
+  const handleAddToCart = (product) => {
+    const existing = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+    const alreadyIn = existing.some((item) => item.id === product.id);
+    let updated;
+    if (alreadyIn) {
+      updated = existing.filter((item) => item.id !== product.id);
+      setCartToast({ name: product.nama_produk, removed: true });
+    } else {
+      updated = [
+        ...existing,
+        {
+          id: product.id,
+          name: product.nama_produk,
+          price: Number(product.harga),
+          jenis: product.categories?.nama_kategori || "—",
+          ukuran: product.ukuran || [],
+          size: product.ukuran?.[0] || "",
+          qty: 1,
+          note: "",
+          product,
+        },
+      ];
+      setCartToast({ name: product.nama_produk, removed: false });
+    }
+    localStorage.setItem(CART_KEY, JSON.stringify(updated));
+    setCartIds(updated.map((item) => item.id));
+    setTimeout(() => setCartToast(null), 2800);
+  };
+
   const handleOrder = (product) => {
     navigate("/order", { state: { product } });
   };
@@ -305,6 +358,36 @@ export default function Koleksi() {
 
   return (
     <div className="min-h-screen bg-white">
+
+      {cartToast && (
+        <div
+          className="fixed top-16 left-1/2 -translate-x-1/2 z-[200] px-5 py-2.5 rounded-full text-sm font-semibold shadow-xl flex items-center gap-2.5"
+          style={{
+            background: cartToast.removed ? "#fff3cd" : "rgba(255,255,255,0.95)",
+            border: cartToast.removed ? "1.5px solid #f6c90e" : "1.5px solid #e879a0",
+            color: cartToast.removed ? "#7a5c00" : "#8b1a4a",
+            backdropFilter: "blur(12px)",
+            whiteSpace: "nowrap",
+            maxWidth: "90vw",
+          }}
+        >
+          {cartToast.removed ? "🗑️" : "🛒"}
+          <span className="truncate">
+            <strong>{cartToast.name}</strong>
+            {cartToast.removed ? " dihapus" : " ditambahkan!"}
+          </span>
+          {!cartToast.removed && (
+            <button
+              onClick={() => navigate("/order")}
+              className="ml-1 underline text-xs font-bold shrink-0"
+              style={{ color: "#c9a227" }}
+            >
+              Lihat →
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="kol-hero-header px-6 sm:px-10 py-10">
         <div className="max-w-7xl mx-auto text-center">
           <h1
@@ -471,6 +554,8 @@ export default function Koleksi() {
         onWishlist={toggleWishlist}
         wishlistIds={wishlistIds}
         onOrder={handleOrder}
+        onAddToCart={handleAddToCart}
+        cartIds={cartIds}
       />
     </div>
   );

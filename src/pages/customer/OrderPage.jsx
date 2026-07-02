@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { CornerOrn, DiamondPattern } from "../../component/Decorations";
 import { supabase } from "../../lib/supabase";
 
+const CART_KEY = "bgc_cart";
 const PPN_RATE = 0.11;
 const toRp = (n) => "Rp " + Math.round(n).toLocaleString("id-ID");
 
@@ -10,7 +11,6 @@ export default function OrderPage() {
   const navigate  = useNavigate();
   const location  = useLocation();
 
-  
   const incomingProduct = location.state?.product || null;
 
   const [cartItems, setCartItems]     = useState([]);
@@ -23,10 +23,8 @@ export default function OrderPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadDone, setUploadDone]   = useState(false);
 
-  
   useEffect(() => {
     const init = async () => {
-      
       const { data: authData } = await supabase.auth.getUser();
       const userId = authData?.user?.id
         || localStorage.getItem("userToken")
@@ -51,7 +49,6 @@ export default function OrderPage() {
         }
       }
 
-      
       if (incomingProduct) {
         setCartItems([{
           id:       incomingProduct.id,
@@ -64,6 +61,11 @@ export default function OrderPage() {
           note:     "",
           product:  incomingProduct,
         }]);
+      } else {
+        const savedCart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+        if (savedCart.length > 0) {
+          setCartItems(savedCart);
+        }
       }
     };
     init();
@@ -74,16 +76,32 @@ export default function OrderPage() {
   const total     = subtotal + ppn;
   const itemCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
 
+  const syncCart = (items) => {
+    if (!incomingProduct) {
+      localStorage.setItem(CART_KEY, JSON.stringify(items));
+    }
+  };
+
   const updateItem = (id, field, value) =>
-    setCartItems(prev => prev.map(it => it.id === id ? { ...it, [field]: value } : it));
+    setCartItems(prev => {
+      const next = prev.map(it => it.id === id ? { ...it, [field]: value } : it);
+      syncCart(next);
+      return next;
+    });
 
   const removeItem = (id) =>
-    setCartItems(prev => prev.filter(it => it.id !== id));
+    setCartItems(prev => {
+      const next = prev.filter(it => it.id !== id);
+      syncCart(next);
+      return next;
+    });
 
   const updateQty = (id, delta) =>
-    setCartItems(prev =>
-      prev.map(it => it.id === id ? { ...it, qty: Math.max(1, it.qty + delta) } : it)
-    );
+    setCartItems(prev => {
+      const next = prev.map(it => it.id === id ? { ...it, qty: Math.max(1, it.qty + delta) } : it);
+      syncCart(next);
+      return next;
+    });
 
   
   const handleSubmit = async () => {
@@ -151,6 +169,9 @@ export default function OrderPage() {
 
     setIsSubmitting(false);
     setOrderId(newOrderId);
+    if (fromCart) {
+      localStorage.removeItem(CART_KEY);
+    }
     setSubmitted(true);
   };
 
@@ -252,7 +273,6 @@ export default function OrderPage() {
             </p>
           </div>
 
-          {/* Upload bukti */}
           {!uploadDone ? (
             <div className="bg-white border border-pink-100 rounded-2xl p-6">
               <p className="font-bold text-base mb-1" style={{ color: "#1a0a10" }}>📎 Upload Bukti Transfer</p>

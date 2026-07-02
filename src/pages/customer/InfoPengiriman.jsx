@@ -27,7 +27,6 @@ export default function InfoPengiriman() {
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #fffafb 0%, #fdf6f0 50%, #fffafb 100%)" }}>
 
-      {/* Header */}
       <div style={{
         position: "sticky", top: 0, zIndex: 30,
         background: "rgba(255,250,251,0.92)", backdropFilter: "blur(12px)",
@@ -48,7 +47,6 @@ export default function InfoPengiriman() {
 
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "32px 20px 60px" }}>
 
-        {/* Hero */}
         <div style={{ ...sectionStyle, textAlign: "center", marginBottom: "28px" }}>
           <div style={{ fontSize: "36px", marginBottom: "8px" }}>📦</div>
           <p style={{ ...titleStyle, justifyContent: "center", fontSize: "20px" }}>Pengiriman ke Seluruh Indonesia</p>
@@ -57,7 +55,6 @@ export default function InfoPengiriman() {
           </p>
         </div>
 
-        {/* Proses */}
         <div style={sectionStyle}>
           <div style={titleStyle}>🔄 Alur Pengiriman</div>
           <div style={bodyStyle}>
@@ -82,7 +79,6 @@ export default function InfoPengiriman() {
           </div>
         </div>
 
-        {/* Ekspedisi */}
         <div style={sectionStyle}>
           <div style={titleStyle}>🚚 Ekspedisi yang Tersedia</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -104,12 +100,10 @@ export default function InfoPengiriman() {
             ))}
           </div>
           <p style={{ ...bodyStyle, marginTop: "14px", fontSize: "12px", color: "#9e8a7a", fontStyle: "italic" }}>
-            {/* ✏️ Sesuaikan catatan biaya pengiriman */}
             * Biaya pengiriman dihitung berdasarkan berat & lokasi tujuan. Detail biaya akan diinformasikan oleh admin.
           </p>
         </div>
 
-        {/* Aturan */}
         <div style={{ ...sectionStyle, background: "linear-gradient(135deg, rgba(184,134,11,0.07), rgba(232,200,98,0.04))", border: "1px solid rgba(184,134,11,0.2)" }}>
           <div style={titleStyle}>⚠️ Ketentuan Pengiriman</div>
           <ul style={{ ...bodyStyle, paddingLeft: "20px", margin: 0 }}>
@@ -120,10 +114,8 @@ export default function InfoPengiriman() {
           </ul>
         </div>
 
-        {/* CTA */}
         <div style={{ ...sectionStyle, textAlign: "center" }}>
           <p style={{ ...titleStyle, justifyContent: "center" }}>📍 Tanya soal pengiriman?</p>
-          {/* ✏️ Ganti nomor WA */}
           <a href="https://wa.me/6285761004981?text=Halo,%20saya%20ingin%20tanya%20soal%20pengiriman%20pesanan." target="_blank" rel="noopener noreferrer"
             style={{
               display: "inline-block", background: "linear-gradient(135deg, #b8860b, #e8c862)",

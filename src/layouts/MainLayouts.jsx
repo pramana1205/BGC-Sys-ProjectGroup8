@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
 import {
   LuTag,
@@ -155,7 +155,6 @@ function Footer() {
         borderTop: "1px solid rgba(184,134,11,0.25)",
       }}
     >
-      {/* ── Main grid ── */}
       <div
         style={{
           maxWidth: "1200px",
@@ -167,7 +166,6 @@ function Footer() {
           alignItems: "start",
         }}
       >
-        {/* ── Col 1: Brand ── */}
         <div>
           <p
             style={{
@@ -193,10 +191,8 @@ function Footer() {
               marginBottom: "16px",
             }}
           >
-            {/* ✏️ Ganti tagline butik di sini */}
             Koleksi Fashion Eksklusif untuk Wanita Modern dan Elegan.
           </p>
-          {/* Social icons */}
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             {SOCIAL_LINKS.map((s) => (
               <SocialIcon key={s.id} {...s} />
@@ -204,12 +200,9 @@ function Footer() {
           </div>
         </div>
 
-        {/* ── Col 2: Hubungi Kami ── */}
         <div>
           <span style={COL_HEADING}>Hubungi Kami</span>
           <div style={COL_DIVIDER} />
-
-          {/* ✏️ Ganti nomor WA di sini */}
           <a
             href="https://wa.me/6285761004981"
             target="_blank"
@@ -223,8 +216,6 @@ function Footer() {
               <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>(WhatsApp / Retail)</span>
             </span>
           </a>
-
-          {/* ✏️ Ganti email di sini */}
           <a
             href="mailto:blackgoldcherish@gmail.com"
             style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "10px", textDecoration: "none" }}
@@ -234,8 +225,6 @@ function Footer() {
               blackgoldcherish@gmail.com
             </span>
           </a>
-
-          {/* ✏️ Ganti alamat di sini */}
           <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
             <LuMapPin size={13} style={{ color: "#e8c862", marginTop: "2px", flexShrink: 0 }} />
             <span style={{ fontSize: "12px", color: "rgba(255,220,235,0.6)", lineHeight: 1.6 }}>
@@ -245,11 +234,9 @@ function Footer() {
           </div>
         </div>
 
-        {/* ── Col 3: Telusuri ── */}
         <div>
           <span style={COL_HEADING}>Telusuri</span>
           <div style={COL_DIVIDER} />
-          {/* ✏️ Tambah/hapus link navigasi sesuai halaman yang ada */}
           <FooterLink to="/koleksi">Koleksi</FooterLink>
           <FooterLink to="/wishlist">Wishlist</FooterLink>
           <FooterLink to="/order">Buat Pesanan</FooterLink>
@@ -258,11 +245,9 @@ function Footer() {
           <FooterLink to="/feedback">Testimoni</FooterLink>
         </div>
 
-        {/* ── Col 4: Bantuan ── */}
         <div>
           <span style={COL_HEADING}>Bantuan</span>
           <div style={COL_DIVIDER} />
-          {/* ✏️ Sesuaikan link bantuan / tambah halaman FAQ dll */}
           <FooterLink to="/terms">Syarat &amp; Ketentuan</FooterLink>
           <FooterLink to="/faq">FAQ</FooterLink>
           <FooterLink to="/panduan-pembayaran">Panduan Pembayaran</FooterLink>
@@ -271,7 +256,6 @@ function Footer() {
         </div>
       </div>
 
-      {/* ── Bottom bar ── */}
       <div
         style={{
           borderTop: "1px solid rgba(184,134,11,0.12)",
@@ -284,7 +268,6 @@ function Footer() {
         }}
       >
         <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.2)", margin: 0 }}>
-          {/* ✏️ Ganti tahun kalau perlu */}
           © 2025 BlackGold Cherish. All rights reserved.
         </p>
       </div>
@@ -292,16 +275,39 @@ function Footer() {
   );
 }
 
+const CART_KEY = "bgc_cart";
+
+function useCartCount() {
+  const getCount = () => {
+    try {
+      return JSON.parse(localStorage.getItem(CART_KEY) || "[]").length;
+    } catch {
+      return 0;
+    }
+  };
+  const [count, setCount] = useState(getCount);
+  useEffect(() => {
+    const onStorage = () => setCount(getCount());
+    window.addEventListener("storage", onStorage);
+    const interval = setInterval(() => setCount(getCount()), 500);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      clearInterval(interval);
+    };
+  }, []);
+  return count;
+}
+
 export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const isLanding = location.pathname === "/";
+  const cartCount = useCartCount();
 
   return (
     <div className="min-h-screen bg-[#fffafb] flex flex-col overflow-x-hidden">
       {!isLanding && (
         <>
-          {/* Desktop Navbar */}
           <nav
             className="kol-navbar sticky top-0 z-40 bg-white hidden sm:flex items-center justify-between px-10 py-4"
             style={{ borderBottom: "1px solid rgba(184,134,11,0.12)" }}
@@ -318,6 +324,7 @@ export default function MainLayout() {
             <div className="flex items-center gap-1">
               {NAV_ITEMS.map(({ path, icon: Icon, title }) => {
                 const isActive = location.pathname === path;
+                const isOrder = path === "/order";
                 return (
                   <button
                     key={path}
@@ -329,11 +336,26 @@ export default function MainLayout() {
                       background: isActive ? "rgba(184,134,11,0.08)" : "transparent",
                     }}
                   >
-                    <Icon
-                      size={22}
-                      style={{ transition: "transform 0.2s, color 0.2s" }}
-                      className="group-hover:scale-110 group-hover:text-[#b8860b]"
-                    />
+                    <span className="relative">
+                      <Icon
+                        size={22}
+                        style={{ transition: "transform 0.2s, color 0.2s" }}
+                        className="group-hover:scale-110 group-hover:text-[#b8860b]"
+                      />
+                      {isOrder && cartCount > 0 && (
+                        <span
+                          className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 rounded-full flex items-center justify-center text-white font-extrabold"
+                          style={{
+                            fontSize: "9px",
+                            background: "linear-gradient(135deg, #e91e8c, #c9a227)",
+                            padding: "0 3px",
+                            lineHeight: 1,
+                          }}
+                        >
+                          {cartCount > 9 ? "9+" : cartCount}
+                        </span>
+                      )}
+                    </span>
                     <span
                       className="text-[10px] font-medium leading-none"
                       style={{
@@ -356,7 +378,7 @@ export default function MainLayout() {
             </div>
           </nav>
 
-          {/* Mobile Top Bar */}
+          {/* Bar Mobile*/}
           <div
             className="sm:hidden sticky top-0 z-40 bg-white flex items-center justify-center px-4 py-3"
             style={{ borderBottom: "1px solid rgba(184,134,11,0.15)" }}
@@ -373,19 +395,19 @@ export default function MainLayout() {
         </>
       )}
 
-      {/* Page Content */}
+      {/* Bagian Halaman */}
       <div className={`flex-1 ${!isLanding ? "pb-20 sm:pb-0" : ""}`}>
         <Outlet />
       </div>
 
-      {/* Desktop Footer */}
+      {/* Footer Desktop */}
       {!isLanding && (
         <div className="hidden sm:block">
           <Footer />
         </div>
       )}
 
-      {/* Mobile Bottom Nav */}
+      {/* Mobile Bottom Nav*/}
       {!isLanding && (
         <nav
           className="sm:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-2 py-2"
@@ -398,6 +420,7 @@ export default function MainLayout() {
         >
           {NAV_ITEMS.map(({ path, icon: Icon, title }) => {
             const isActive = location.pathname === path;
+            const isOrder = path === "/order";
             return (
               <button
                 key={path}
@@ -410,7 +433,22 @@ export default function MainLayout() {
                   minWidth: "52px",
                 }}
               >
-                <Icon size={22} style={{ transition: "transform 0.2s, color 0.2s" }} />
+                <span className="relative">
+                  <Icon size={22} style={{ transition: "transform 0.2s, color 0.2s" }} />
+                  {isOrder && cartCount > 0 && (
+                    <span
+                      className="absolute -top-1.5 -right-2 min-w-[16px] h-4 rounded-full flex items-center justify-center text-white font-extrabold animate-pulse"
+                      style={{
+                        fontSize: "9px",
+                        background: "linear-gradient(135deg, #e91e8c, #c9a227)",
+                        padding: "0 3px",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {cartCount > 9 ? "9+" : cartCount}
+                    </span>
+                  )}
+                </span>
                 <span
                   className="text-[9px] font-semibold leading-none text-center w-full"
                   style={{

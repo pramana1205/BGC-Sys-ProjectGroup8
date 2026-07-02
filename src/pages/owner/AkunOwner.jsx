@@ -71,7 +71,6 @@ export default function AkunOwner() {
         </div>
 
         <div className="max-w-xl bg-white rounded-3xl border border-amber-100 p-8">
-          {/* Avatar & nama */}
           <div className="flex items-center gap-5 mb-8">
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0"
@@ -139,7 +138,6 @@ export default function AkunOwner() {
         </div>
       </div>
 
-      {/* Dekorasi kanan */}
       <div
         className="hidden lg:flex flex-col items-center justify-center gap-5 rounded-3xl p-8 w-72 shrink-0"
         style={{

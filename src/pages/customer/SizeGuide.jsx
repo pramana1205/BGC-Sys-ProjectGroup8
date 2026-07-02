@@ -91,7 +91,6 @@ export default function SizeGuide() {
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #fffafb 0%, #fdf6f0 50%, #fffafb 100%)" }}>
 
-      {/* Header */}
       <div style={{
         position: "sticky", top: 0, zIndex: 30,
         background: "rgba(255,250,251,0.92)", backdropFilter: "blur(12px)",
@@ -112,7 +111,6 @@ export default function SizeGuide() {
 
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "32px 20px 60px" }}>
 
-        {/* Hero */}
         <div style={{ ...sectionStyle, textAlign: "center", marginBottom: "28px" }}>
           <div style={{ fontSize: "36px", marginBottom: "8px" }}>📏</div>
           <p style={{ ...titleStyle, justifyContent: "center", fontSize: "20px" }}>Temukan Ukuran yang Pas Untukmu</p>
@@ -122,7 +120,6 @@ export default function SizeGuide() {
           </p>
         </div>
 
-        {/* Cara mengukur */}
         <div style={sectionStyle}>
           <div style={titleStyle}>📐 Cara Mengukur Tubuh</div>
           <div style={bodyStyle}>
@@ -144,12 +141,10 @@ export default function SizeGuide() {
           </div>
         </div>
 
-        {/* Tabel ukuran */}
         {SIZE_CATEGORIES.map((cat, i) => (
           <SizeTable key={i} {...cat} />
         ))}
 
-        {/* Tips */}
         <div style={{ ...sectionStyle, background: "linear-gradient(135deg, rgba(184,134,11,0.07), rgba(232,200,98,0.04))", border: "1px solid rgba(184,134,11,0.2)" }}>
           <div style={titleStyle}>💡 Tips Memilih Ukuran</div>
           <ul style={{ ...bodyStyle, paddingLeft: "20px", margin: 0 }}>
@@ -159,10 +154,8 @@ export default function SizeGuide() {
           </ul>
         </div>
 
-        {/* CTA */}
         <div style={{ ...sectionStyle, textAlign: "center" }}>
           <p style={{ ...titleStyle, justifyContent: "center" }}>🤝 Butuh konsultasi ukuran?</p>
-          {/* ✏️ Ganti nomor WA */}
           <a href="https://wa.me/6285761004981?text=Halo,%20saya%20ingin%20konsultasi%20ukuran%20produk." target="_blank" rel="noopener noreferrer"
             style={{
               display: "inline-block", background: "linear-gradient(135deg, #b8860b, #e8c862)",
